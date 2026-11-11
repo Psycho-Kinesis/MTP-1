@@ -1,0 +1,85 @@
+{
+  "review_date": "2026-11-09",
+  "purpose": "Trace numeric literals to an inspected table or an explicit analytical reference. Published comparisons are not all same-theory verification.",
+  "isotropic_frequency": {
+    "fsdt_value": 0.093,
+    "elasticity_value": 0.0932,
+    "quantity": "omega_11*h*sqrt(rho/G), G=E/[2(1+nu)]",
+    "parameters": {
+      "a_over_h": 10,
+      "b_over_a": 1,
+      "nu": 0.3,
+      "m": 1,
+      "n": 1
+    },
+    "source": "Shimpi, R.P. and Patel, H.G. (2006). Free vibrations of plate using two variable refined plate theory. Journal of Sound and Vibration 296, 979-999.",
+    "doi": "10.1016/j.jsv.2006.03.030",
+    "url": "https://imechanica.egr.uh.edu/sites/default/files/Free%20vibrations%20of%20plate%20using%20two%20variable%20refined%20plate%20theory.pdf",
+    "location": "Table 1, printed p. 995, PDF page 17, row (m,n)=(1,1), Mindlin [28] and EXACT [28] columns",
+    "status": "Verified in the inspected comparison paper; original source [28] was not independently inspected.",
+    "comparison_types": {
+      "fsdt_value": "same-theory rounded literature comparison",
+      "elasticity_value": "different-model context, not an exact FSDT target"
+    }
+  },
+  "fg_sine_deflection": {
+    "values": {
+      "0": 0.296,
+      "1": 0.5889,
+      "2": 0.7573,
+      "4": 0.8819,
+      "10": 1.0089,
+      "metal": 1.607
+    },
+    "quantity": "wbar=10*Ec*h^3*w(a/2,b/2)/(q0*a^4)",
+    "parameters": {
+      "a_over_h": 10,
+      "b_over_a": 1,
+      "Ec_Pa": 380000000000,
+      "Em_Pa": 70000000000,
+      "nu": 0.3,
+      "load": "q0*sin(pi*x/a)*sin(pi*y/b)"
+    },
+    "source": "Nguyen, H.N., Hong, T.T., Vinh, P.V., Quang, N.D. and Thom, D.V. (2019). A Refined Simple First-Order Shear Deformation Theory for Static Bending and Free Vibration Analysis of Advanced Composite Plates. Materials 12(15), 2385.",
+    "doi": "10.3390/ma12152385",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6695951/#sec3-1-materials-12-02385",
+    "location": "Section 3.1, Table 4, wbar column, SSDT [52] rows Ceramic, 1, 2, 4, 10 and Metal; not the Present rows and not uniform-load Table 3",
+    "attributed_original": "Zenkour, A.M. (2006). Generalized shear deformation theory for bending analysis of functionally graded plates. Applied Mathematical Modelling 30, 67-84. DOI 10.1016/j.apm.2005.03.009.",
+    "status": "Verified reproduced values and row labels in Nguyen et al.; the exact table number in the original Zenkour paper remains unverified.",
+    "comparison_type": "Different plate theory. Small low-g discrepancies do not establish same-theory identity; g=2,4,10 are contextual values, not acceptance targets for this FSDT solver."
+  },
+  "fg_tsdt_frequency": {
+    "values": {
+      "0": 0.2113,
+      "0.5": 0.1807,
+      "1": 0.1631,
+      "4": 0.1378,
+      "10": 0.1301
+    },
+    "quantity": "omega_hat = omega_11*h*sqrt(rho_c/E_c), fundamental frequency, simply supported square plate",
+    "parameters": {
+      "a_over_h": 5,
+      "b_over_a": 1,
+      "Ec_Pa": 380000000000,
+      "Em_Pa": 70000000000,
+      "rho_c": 3800,
+      "rho_m": 2702,
+      "nu": 0.3
+    },
+    "source": "Belkhodja, Y., Ouinas, D., Zaoui, F.Z. and Fekirini, H. (2020). An exponential-trigonometric higher order shear deformation theory (HSDT) for bending, free vibration, and buckling analysis of functionally graded materials (FGMs) plates. Advanced Composites Letters 29.",
+    "doi": "10.1177/0963693519875739",
+    "url": "https://journals.sagepub.com/doi/10.1177/0963693519875739",
+    "location": "Table 5, a/h = 5, mode 1(1,1), row 'TSDT (Hosseini-Hashemi et al.)'; the same row is quoted in Table 3 of an eight-unknown shear deformation FE paper (ResearchGate 311267843) next to an FSDT row 0.2108, 0.1802, 0.1629, 0.1396, 0.1322",
+    "attributed_original": "Hosseini-Hashemi et al. (Reddy third-order theory, exact closed form), as cited in the source above.",
+    "status": "Found on 9 November 2026 through search-result excerpts of the two secondary sources; the column-to-g mapping is taken from the ResearchGate table. Neither the full secondary tables nor the original Hosseini-Hashemi table were inspected.",
+    "comparison_type": "Same theory (Reddy TSDT) rounded literature values: contextual agreement check to the printed 4 digits. Primary verification of the TSDT mass matrix is the FSDT limit and the independent symbolic Ritz derivation."
+  },
+  "analytical_references": {
+    "thin_uniform": "Independent CPT double-series center sum: 16/pi^6 * sum over odd m,n of sin(m*pi/2)*sin(n*pi/2)/[m*n*(m^2+n^2)^2]; cutoff 999 used. Rounded handoff literal was 0.00406235; no verified book edition/page was supplied.",
+    "thin_sine": "CPT square plate W=q0*a^4/(4*pi^4*D), D=E*h^3/[12*(1-nu^2)].",
+    "thin_frequency": "CPT square plate omega_11=2*pi^2/a^2*sqrt(D/(rho*h)).",
+    "constant_nu_static": "Schur complement of coupled FSDT matrix: Dstar=D11-B11^2/A11; W=Q/[Dstar*(alpha^2+beta^2)^2]+Q/[As*(alpha^2+beta^2)]. Analytical same-theory check, not a paper-table value.",
+    "uniform_truncation": "Same-theory reference recomputed at cutoff 199 for legacy scalar convergence checks; pilot compares cutoff 49 against 99 for all five grid fields.",
+    "ritz": "Independent symbolic energy derivation in validation/ritz_crosscheck.py with adaptive thickness integration; no external numeric literal or paper table."
+  }
+}

@@ -1,0 +1,6 @@
+PASS: saved artifacts and generation source checksums (changed since generation; verified against provenance snapshot: fgplate/baseline.py, fgplate/pilot.py, experiments/run_pilot.py)
+PASS: shapes, finite labels, pilot-1.0 design identities and loads re-derived from stored parameters, disjoint splits
+PASS: archived coefficients and all five fields match fresh matrix solves
+PASS: saved model predictions and reported held-out metrics
+
+--- STDERR (warnings preserved) ---

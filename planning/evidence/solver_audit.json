@@ -1,0 +1,37 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.3.5",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "cases": 100,
+  "sinusoidal": {
+    "median_scalar_ms": 0.0778499961597845,
+    "median_additional_grid_ms": 0.056400000175926834,
+    "normalized_field_singular_ratios": [
+      1.0,
+      3.0619068249045254e-16,
+      1.2747219211850337e-16,
+      4.9830836658221853e-17,
+      4.655563280986009e-17,
+      4.2415965562082284e-17,
+      3.9593618851207706e-17,
+      3.889363341184455e-17
+    ],
+    "rank_above_1e_10": 1
+  },
+  "uniform": {
+    "median_scalar_ms": 12.901800000690855,
+    "median_additional_grid_ms": 16.062650000094436,
+    "normalized_field_singular_ratios": [
+      1.0,
+      0.016695167972343994,
+      0.006466360327243957,
+      0.0007232877669373434,
+      0.00022777958118948426,
+      4.4105978476275995e-05,
+      3.606212178462682e-05,
+      1.042655743137788e-05
+    ],
+    "rank_above_1e_10": 17
+  },
+  "interpretation": "100 seeded random cases; scalar time includes construction, bending, center evaluation and fundamental frequency. Grid time is extra. No ML timing or speedup measured. Uniform series uses max indices 49."
+}

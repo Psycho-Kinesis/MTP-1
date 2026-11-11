@@ -1,0 +1,46 @@
+
+--- STDERR (warnings preserved) ---
+test_callable_projection_known_modes_and_uniform (test_extensions.SolverTests.test_callable_projection_known_modes_and_uniform) ... ok
+test_closed_form_all_coefficients_and_equilibrium (test_extensions.SolverTests.test_closed_form_all_coefficients_and_equilibrium) ... ok
+test_essential_and_natural_boundary_conditions (test_extensions.SolverTests.test_essential_and_natural_boundary_conditions) ... ok
+test_exact_moments_against_adaptive_quadrature (test_extensions.SolverTests.test_exact_moments_against_adaptive_quadrature) ... /home/user/MTP/mtp-fg-plate/validation/test_extensions.py:42: IntegrationWarning: The occurrence of roundoff error is detected, which prevents 
+  the requested tolerance from being achieved.  The error may be 
+  underestimated.
+  numerical=quad(lambda t:getattr(mat,prop)((t-.5)*h,h)*(t-.5)**k,0,1,
+ok
+test_generalized_eigen_residual_and_mass_orthogonality (test_extensions.SolverTests.test_generalized_eigen_residual_and_mass_orthogonality) ... ok
+test_geometry_modes_and_load_validation (test_extensions.SolverTests.test_geometry_modes_and_load_validation) ... ok
+test_global_flexural_scan_and_homogeneous_decoupling (test_extensions.SolverTests.test_global_flexural_scan_and_homogeneous_decoupling) ... ok
+test_grid_points_and_derivatives (test_extensions.SolverTests.test_grid_points_and_derivatives) ... ok
+test_load_superposition_and_zero_load (test_extensions.SolverTests.test_load_superposition_and_zero_load) ... ok
+test_material_rejects_invalid_parameters (test_extensions.SolverTests.test_material_rejects_invalid_parameters) ... ok
+test_analytic_basis_recovers_solver_coefficients (test_fields.FieldTests.test_analytic_basis_recovers_solver_coefficients) ... ok
+test_bootstrap_interval (test_fields.FieldTests.test_bootstrap_interval) ... ok
+test_pod_full_rank_is_exact_and_orthonormal (test_fields.FieldTests.test_pod_full_rank_is_exact_and_orthonormal) ... ok
+test_scaling_round_trip_and_removes_thickness_cube (test_fields.FieldTests.test_scaling_round_trip_and_removes_thickness_cube) ... ok
+test_ids_and_loads_survive_last_bit_parameter_differences (test_pilot.PilotTests.test_ids_and_loads_survive_last_bit_parameter_differences) ... ok
+test_load_identity_normalization_and_signed_even_modes (test_pilot.PilotTests.test_load_identity_normalization_and_signed_even_modes) ... ok
+test_model_scaling_uses_fit_subset_and_serialization (test_pilot.PilotTests.test_model_scaling_uses_fit_subset_and_serialization) ... ok
+test_sampling_reproducibility_ranges_and_unique_groups (test_pilot.PilotTests.test_sampling_reproducibility_ranges_and_unique_groups) ... ok
+test_block_ridge_is_equivariant_to_component_rescaling (test_transfer.TransferTests.test_block_ridge_is_equivariant_to_component_rescaling) ... ok
+test_data_only_interpolates_and_hybrid_agrees_with_consistent_truth (test_transfer.TransferTests.test_data_only_interpolates_and_hybrid_agrees_with_consistent_truth) ... ok
+test_features_and_domain (test_transfer.TransferTests.test_features_and_domain) ... ok
+test_mode_matrices_reproduce_solver (test_transfer.TransferTests.test_mode_matrices_reproduce_solver) ... ok
+test_physics_minimizer_invariant_to_positive_design_weights (test_transfer.TransferTests.test_physics_minimizer_invariant_to_positive_design_weights) ... ok
+test_physics_only_recovers_truth_without_labels_when_class_contains_it (test_transfer.TransferTests.test_physics_only_recovers_truth_without_labels_when_class_contains_it) ... ok
+test_physics_prefactor_and_log_aspect (test_transfer.TransferTests.test_physics_prefactor_and_log_aspect) ... ok
+test_prefactor_data_loss (test_transfer.TransferTests.test_prefactor_data_loss) ... ok
+test_fsdt_limit_equals_navier_matrices (test_tsdt.TSDTTests.test_fsdt_limit_equals_navier_matrices) ... ok
+test_reproduces_published_higher_order_deflections (test_tsdt.TSDTTests.test_reproduces_published_higher_order_deflections) ... ok
+test_theories_converge_for_thin_plates_and_differ_for_thick (test_tsdt.TSDTTests.test_theories_converge_for_thin_plates_and_differ_for_thick) ... ok
+test_transfer_scaling (test_tsdt.TSDTTests.test_transfer_scaling) ... ok
+test_tsdt_symmetric_positive_definite_and_stiffer_than_fsdt_in_shear (test_tsdt.TSDTTests.test_tsdt_symmetric_positive_definite_and_stiffer_than_fsdt_in_shear) ... ok
+test_batch_equals_scalar (test_tsdt.TSDTVibrationAndBatchTests.test_batch_equals_scalar) ... ok
+test_fsdt_limit_mass_equals_navier (test_tsdt.TSDTVibrationAndBatchTests.test_fsdt_limit_mass_equals_navier) ... ok
+test_published_tsdt_frequencies (test_tsdt.TSDTVibrationAndBatchTests.test_published_tsdt_frequencies) ... ok
+test_tsdt_mass_positive_definite_and_thin_limit (test_tsdt.TSDTVibrationAndBatchTests.test_tsdt_mass_positive_definite_and_thin_limit) ... ok
+
+----------------------------------------------------------------------
+Ran 35 tests in 0.314s
+
+OK

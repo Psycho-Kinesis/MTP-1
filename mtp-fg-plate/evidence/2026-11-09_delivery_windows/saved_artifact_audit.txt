@@ -1,0 +1,6 @@
+PASS: saved artifacts and generation source checksums
+PASS: shapes, finite labels, deterministic design identities and disjoint splits
+PASS: archived coefficients and all five fields match fresh matrix solves
+PASS: saved model predictions and reported held-out metrics
+
+--- STDERR (warnings preserved) ---

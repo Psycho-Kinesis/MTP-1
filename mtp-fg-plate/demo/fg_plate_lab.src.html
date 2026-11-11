@@ -1,0 +1,834 @@
+<title>FG Plate Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Layout: instrument panel. A control rail on the left, live readouts and plots on the right; tabs for the four views.
+   Motif: the ceramic-to-metal grading strip of an FG plate. Model colours match the report figures. */
+:root {
+  --bg: #f3f5f8;
+  --surface: #ffffff;
+  --surface-2: #e9eef3;
+  --ink: #14202b;
+  --muted: #566372;
+  --line: #d6dee6;
+  --accent: #1d5d96;
+  --accent-ink: #ffffff;
+  --ceramic: #f2f5f7;
+  --metal: #7d8a97;
+  --tsdt: #14202b;
+  --fsdt: #7b4fb0;
+  --ml: #1b8a4b;
+  --data: #d27a22;
+  --good: #1b8a4b;
+  --warn: #a8710f;
+  --bad: #c03a2b;
+  --good-bg: #e3f3ea;
+  --warn-bg: #fbf0d9;
+  --bad-bg: #fbe4e1;
+  --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e141a; --surface: #161f28; --surface-2: #1d2833; --ink: #e5ecf2; --muted: #9aa8b5; --line: #2a3743;
+    --accent: #5aa0de; --accent-ink: #0e141a; --ceramic: #dfe6eb; --metal: #556270; --tsdt: #e5ecf2; --fsdt: #b896e6;
+    --ml: #4cc47f; --data: #f0a35a; --good: #4cc47f; --warn: #e2b452; --bad: #f2776a;
+    --good-bg: #173326; --warn-bg: #3a2f14; --bad-bg: #3d1d1a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e141a; --surface: #161f28; --surface-2: #1d2833; --ink: #e5ecf2; --muted: #9aa8b5; --line: #2a3743;
+  --accent: #5aa0de; --accent-ink: #0e141a; --ceramic: #dfe6eb; --metal: #556270; --tsdt: #e5ecf2; --fsdt: #b896e6;
+  --ml: #4cc47f; --data: #f0a35a; --good: #4cc47f; --warn: #e2b452; --bad: #f2776a;
+  --good-bg: #173326; --warn-bg: #3a2f14; --bad-bg: #3d1d1a; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1320px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: 1.65rem; font-weight: 700; }
+h2 { font-size: 1.2rem; font-weight: 600; }
+h3 { font-size: 1rem; font-weight: 600; }
+p { margin: 0; }
+.mono, .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.small { font-size: 0.85rem; }
+
+header.top { background: var(--surface); border-bottom: 1px solid var(--line); }
+.top-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; padding-block: 16px 0; }
+.brand { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.brand p { color: var(--muted); font-size: 0.9rem; }
+.grading { height: 6px; border-radius: 3px; width: 168px; background: linear-gradient(90deg, var(--ceramic), var(--metal)); border: 1px solid var(--line); }
+nav.tabs { display: flex; gap: 4px; margin-left: auto; flex-wrap: wrap; }
+nav.tabs a { text-decoration: none; color: var(--muted); font-weight: 500; padding: 10px 14px; border-bottom: 3px solid transparent; }
+nav.tabs a:hover { color: var(--ink); }
+nav.tabs a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--accent); }
+nav.tabs a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+main { padding-block: 20px 40px; }
+.view-head { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; max-width: 75ch; }
+.layout { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 960px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.panel h3 { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.stack { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.row2 { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 20px; }
+@media (max-width: 1200px) { .row2 { grid-template-columns: minmax(0, 1fr); } }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label, .label { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
+.field .val { font-family: var(--font-mono); font-size: 0.95rem; color: var(--ink); text-transform: none; letter-spacing: 0; font-weight: 500; }
+.field-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.hint { font-size: 0.8rem; color: var(--muted); }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+input[type="number"] { width: 100%; font-family: var(--font-mono); font-size: 0.95rem; padding: 7px 9px; border-radius: 7px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; background: var(--surface); color: var(--muted); padding: 8px 6px; font: inherit; font-size: 0.88rem; cursor: pointer; border-right: 1px solid var(--line); }
+.seg button:last-child { border-right: 0; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.btn { font: inherit; font-weight: 600; border-radius: 8px; padding: 10px 14px; cursor: pointer; border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink); }
+.btn.ghost { background: transparent; color: var(--accent); }
+.btn:disabled { opacity: 0.55; cursor: progress; }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.check { display: flex; gap: 8px; align-items: center; font-size: 0.9rem; }
+
+.profile-bar { height: 92px; border-radius: 6px; border: 1px solid var(--line); position: relative; overflow: hidden; }
+.profile-legend { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--muted); }
+
+.plot { width: 100%; min-height: 300px; }
+.plot.tall { min-height: 420px; }
+.readout { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.readout th { text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+.readout td { padding: 9px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.readout td.num { text-align: right; white-space: nowrap; }
+.readout tr:last-child td { border-bottom: 0; }
+.swatch { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; vertical-align: baseline; }
+.model-name { font-weight: 600; }
+.model-sub { display: block; font-size: 0.78rem; color: var(--muted); }
+.chip { display: inline-block; font-family: var(--font-mono); font-size: 0.78rem; padding: 2px 7px; border-radius: 999px; font-weight: 500; white-space: nowrap; }
+.chip.good { background: var(--good-bg); color: var(--good); }
+.chip.warn { background: var(--warn-bg); color: var(--warn); }
+.chip.bad { background: var(--bad-bg); color: var(--bad); }
+.chip.ref { background: var(--surface-2); color: var(--muted); }
+.table-scroll { overflow-x: auto; }
+.plate-facts { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 0.88rem; color: var(--muted); }
+.plate-facts b { color: var(--ink); font-family: var(--font-mono); font-weight: 500; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 0.9rem; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.status { font-size: 0.85rem; font-weight: 600; padding: 6px 10px; border-radius: 7px; }
+.status.good { background: var(--good-bg); color: var(--good); }
+.status.bad { background: var(--bad-bg); color: var(--bad); }
+.status.warn { background: var(--warn-bg); color: var(--warn); }
+.note { font-size: 0.85rem; color: var(--muted); }
+.callout { background: var(--surface-2); border-radius: var(--radius); padding: 12px 14px; font-size: 0.9rem; }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+.tile .big { font-family: var(--font-display); font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; }
+.tile p { font-size: 0.88rem; color: var(--muted); }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+@media (max-width: 960px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
+ul.clean { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+
+.flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 960px) { .flow { grid-template-columns: minmax(0, 1fr); } }
+.step { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column; gap: 8px; position: relative; }
+.step .n { font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent); font-weight: 500; letter-spacing: 0.04em; }
+.formula { font-family: var(--font-mono); font-size: 0.88rem; background: var(--surface-2); border-radius: 7px; padding: 8px 10px; overflow-x: auto; }
+.spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: -1px; margin-right: 6px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+footer { padding-block: 10px 30px; color: var(--muted); font-size: 0.82rem; }
+</style>
+
+<header class="top">
+  <div class="wrap top-inner">
+    <div class="brand">
+      <h1>FG Plate Lab</h1>
+      <p>Physics-informed machine learning for functionally graded Al/Al₂O₃ plates · MTP, IIT Kharagpur</p>
+      <div class="grading" title="Ceramic (top) to metal (bottom) grading"></div>
+    </div>
+    <nav class="tabs" aria-label="Views">
+      <a href="#simulator" data-view="simulator">Plate simulator</a>
+      <a href="#design" data-view="design">Design studio</a>
+      <a href="#evidence" data-view="evidence">Evidence</a>
+      <a href="#method" data-view="method">How it works</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- ======================================================= SIMULATOR -->
+  <section id="view-simulator" data-view-panel="simulator">
+    <div class="view-head">
+      <h2>Plate simulator</h2>
+      <p class="muted">A simply supported plate, graded from ceramic (top face) to aluminium (bottom face). Move the sliders: the accurate theory (TSDT), the cheap theory (FSDT) and our ML model all recompute instantly in your browser. The ML model learned from only 10 accurate solutions.</p>
+    </div>
+    <div class="layout">
+      <aside class="panel" aria-label="Plate parameters">
+        <div class="field">
+          <div class="field-top"><label for="in-g">Gradient index g</label><span class="val" id="out-g"></span></div>
+          <input type="range" id="in-g" min="0" max="8" step="0.05" value="4">
+          <span class="hint" id="hint-g"></span>
+        </div>
+        <div class="field">
+          <div class="label">Through-thickness grading</div>
+          <div class="profile-bar" id="profile-bar" role="img" aria-label="Ceramic fraction through the thickness"></div>
+          <div class="profile-legend"><span>top: 100% ceramic</span><span id="profile-mid"></span><span>bottom: aluminium</span></div>
+        </div>
+        <div class="field">
+          <div class="field-top"><label for="in-r">Slenderness a/h</label><span class="val" id="out-r"></span></div>
+          <input type="range" id="in-r" min="0" max="1000" step="1" value="61">
+          <span class="hint" id="hint-r"></span>
+        </div>
+        <div class="field">
+          <div class="field-top"><label for="in-lam">Aspect ratio b/a</label><span class="val" id="out-lam"></span></div>
+          <input type="range" id="in-lam" min="0.5" max="2" step="0.01" value="1">
+        </div>
+        <div class="pair">
+          <div class="field"><label for="in-a">Length a (m)</label><input type="number" id="in-a" min="0.05" max="10" step="0.05" value="0.5"></div>
+          <div class="field"><label for="in-q">Pressure (kPa)</label><input type="number" id="in-q" min="1" max="100000" step="10" value="1000"></div>
+        </div>
+        <div class="field">
+          <div class="label" id="lbl-load">Load shape</div>
+          <div class="seg" role="group" aria-labelledby="lbl-load">
+            <button type="button" id="load-uniform" data-load="uniform" aria-pressed="true">Uniform</button>
+            <button type="button" id="load-sine" data-load="sine" aria-pressed="false">Sinusoidal</button>
+            <button type="button" id="load-patch" data-load="patch" aria-pressed="false">Patch</button>
+          </div>
+        </div>
+        <div id="patch-controls" hidden>
+          <div class="field">
+            <div class="field-top"><label for="in-sigma">Patch width σ / a</label><span class="val" id="out-sigma"></span></div>
+            <input type="range" id="in-sigma" min="0.04" max="0.3" step="0.005" value="0.1">
+          </div>
+          <div class="pair">
+            <div class="field">
+              <div class="field-top"><label for="in-x0">Centre x/a</label><span class="val" id="out-x0"></span></div>
+              <input type="range" id="in-x0" min="0.2" max="0.8" step="0.01" value="0.35">
+            </div>
+            <div class="field">
+              <div class="field-top"><label for="in-y0">Centre y/b</label><span class="val" id="out-y0"></span></div>
+              <input type="range" id="in-y0" min="0.2" max="0.8" step="0.01" value="0.6">
+            </div>
+          </div>
+        </div>
+        <label class="check"><input type="checkbox" id="in-animate"> Animate the first vibration mode</label>
+        <p class="note">The ML model was trained on smooth mixed loads; uniform and patch loads are shapes it never saw (experiment H2).</p>
+      </aside>
+
+      <div class="stack">
+        <div class="row2">
+          <div class="panel">
+            <h3>Deflected plate <span class="hint" id="surf-note">accurate theory (TSDT), exaggerated</span></h3>
+            <div id="plot-surface" class="plot tall"></div>
+          </div>
+          <div class="panel">
+            <h3>Results <span class="hint">error vs accurate theory</span></h3>
+            <div class="plate-facts" id="plate-facts"></div>
+            <div class="table-scroll">
+              <table class="readout" aria-label="Model comparison">
+                <thead><tr><th>Model</th><th class="num">Max deflection</th><th class="num">1st frequency</th></tr></thead>
+                <tbody id="readout"></tbody>
+              </table>
+            </div>
+            <p class="note" id="readout-note"></p>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>Accuracy vs thickness <span class="hint">max deflection error for this g and b/a</span></h3>
+          <div id="plot-sweep" class="plot"></div>
+          <p class="note">For thick, metal-rich plates (small a/h, larger g) FSDT drifts from TSDT by 1–4%, on the unsafe side. The ML model learned that correction from 10 accurate solutions; the data-only model with the same 10 solutions cannot. For ceramic-rich plates FSDT is already accurate, and the ML model stays within about 0.1%.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= DESIGN STUDIO -->
+  <section id="view-design" data-view-panel="design" hidden>
+    <div class="view-head">
+      <h2>Design studio</h2>
+      <p class="muted">Find the lightest plate that stays within a deflection limit and a minimum natural frequency, optionally with a ceramic budget. Each model designs a plate in a fraction of a second; then the design is checked with the accurate theory, as an engineer would before building it.</p>
+    </div>
+    <div class="layout">
+      <aside class="panel" aria-label="Design requirements">
+        <div class="btns">
+          <button type="button" class="btn ghost" id="preset-main">Report problem</button>
+          <button type="button" class="btn ghost" id="preset-thin">Thin panel (1 m)</button>
+        </div>
+        <div class="pair">
+          <div class="field"><label for="d-a">Length a (m)</label><input type="number" id="d-a" step="0.05" min="0.1" max="10" value="0.5"></div>
+          <div class="field"><label for="d-lam">Aspect b/a</label><input type="number" id="d-lam" step="0.05" min="0.5" max="2" value="1.5"></div>
+        </div>
+        <div class="field"><label for="d-q">Uniform pressure (kPa)</label><input type="number" id="d-q" step="10" min="1" value="1000"></div>
+        <div class="pair">
+          <div class="field"><label for="d-w">Max deflection (mm)</label><input type="number" id="d-w" step="0.01" min="0.001" value="0.14"></div>
+          <div class="field"><label for="d-f">Min frequency (Hz)</label><input type="number" id="d-f" step="10" min="1" value="1200"></div>
+        </div>
+        <div class="field">
+          <div class="field-top"><label for="d-c">Ceramic budget h/(g+1) (mm)</label><span class="val" id="out-dc"></span></div>
+          <input type="range" id="d-c" min="5" max="60" step="0.5" value="20">
+          <label class="check"><input type="checkbox" id="d-nolimit"> No ceramic limit</label>
+        </div>
+        <p class="note">Allowed designs: 0 ≤ g ≤ 8 and 5 ≤ a/h ≤ 100, the range the models were trained on.</p>
+        <button type="button" class="btn" id="btn-design">Design the lightest plate</button>
+        <button type="button" class="btn ghost" id="btn-exact">Find exact optimum with accurate theory</button>
+        <p class="note" id="exact-note">The exact optimum needs thousands of accurate analyses; the ML route needs one check.</p>
+      </aside>
+      <div class="stack">
+        <div class="cards" id="design-cards"></div>
+        <div class="row2">
+          <div class="panel">
+            <h3>Design map <span class="hint">ML model: allowed region and mass</span></h3>
+            <div id="plot-map" class="plot tall"></div>
+            <p class="note">Shaded: designs the ML model allows. Lines: areal mass (kg/m²). Markers: each model's lightest design.</p>
+          </div>
+          <div class="panel">
+            <h3>Mass vs ceramic use <span class="hint">lightest plate for each g</span></h3>
+            <div id="plot-trade" class="plot tall"></div>
+            <p class="note" id="trade-note"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= EVIDENCE -->
+  <section id="view-evidence" data-view-panel="evidence" hidden>
+    <div class="view-head">
+      <h2>Evidence</h2>
+      <p class="muted">Every number here comes from pre-registered tests: the prediction was written down and locked before the test designs existed, then evaluated once on fresh designs the models never saw. Each result reproduces exactly when rerun.</p>
+    </div>
+    <div class="stack">
+      <div class="tiles" id="tiles"></div>
+      <div class="grid2">
+        <div class="panel">
+          <h3>Accuracy vs number of accurate solutions <span class="hint">E5, 200 fresh designs</span></h3>
+          <div id="plot-e5" class="plot"></div>
+          <p class="note">Solid: median error. Dashed: 95th percentile. Physics only uses no accurate solutions at all.</p>
+        </div>
+        <div class="panel">
+          <h3>Load shapes never seen in training <span class="hint">H2, 95th percentile, 10 solutions</span></h3>
+          <div id="plot-h2" class="plot"></div>
+          <p class="note">Extending the model to 15×15 modes, with the same 10 solutions, removes the error floor on narrow patches.</p>
+        </div>
+        <div class="panel">
+          <h3>Cost of reaching safe designs <span class="hint">H3, 100 random design problems</span></h3>
+          <div id="plot-h3" class="plot"></div>
+          <p class="note">Accurate analyses used, including the 10 training solutions. Every design was then checked with the accurate theory.</p>
+        </div>
+        <div class="panel">
+          <h3>How the work was checked</h3>
+          <ul class="clean">
+            <li>FSDT and TSDT solvers match an independent symbolic derivation to about 10⁻¹⁴, and published TSDT frequencies to all 4 printed digits.</li>
+            <li>27 mechanics checks and 35 unit tests pass; the 200-design dataset is frozen and checksummed.</li>
+            <li>Confirmations E4, E5, H2 and H3 were each pre-registered and evaluated once on designs generated after the plan was locked.</li>
+            <li>Every experiment was rerun and reproduced bit for bit.</li>
+          </ul>
+          <div class="callout"><b>Scope.</b> Simply supported rectangular plates, linear elasticity, smooth loads. The accurate reference is TSDT (a plate theory), standing in for FEM or 3D analysis; costs are counted in accurate analyses, not seconds.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= METHOD -->
+  <section id="view-method" data-view-panel="method" hidden>
+    <div class="view-head">
+      <h2>How it works</h2>
+      <p class="muted">The idea in four steps: learn the cheap physics without data, spend the few expensive solutions only on what the physics gets wrong, and always check the final design.</p>
+    </div>
+    <div class="stack">
+      <div class="flow">
+        <div class="step"><span class="n">STEP 1 · NO DATA</span><h3>Learn the cheap physics</h3><p>A polynomial model of each plate mode's response is fitted to the FSDT energy equations at 1,000+ unlabelled designs. No solved examples are needed.</p></div>
+        <div class="step"><span class="n">STEP 2 · 10 SOLUTIONS</span><h3>Learn only the correction</h3><p>FSDT misses higher-order shear effects in thick plates. That error grows like (k·h)², so the correction is learned in that form from 10 TSDT solutions.</p></div>
+        <div class="step"><span class="n">STEP 3 · INSTANT</span><h3>Predict any design and load</h3><p>Bending fields and the first frequency for any g, a/h, b/a, and any smooth load, in microseconds.</p></div>
+        <div class="step"><span class="n">STEP 4 · ONE CHECK</span><h3>Design, then verify</h3><p>Optimize the plate with the ML model, then check the chosen design once with the accurate theory. Corrections, when needed, take one more check.</p></div>
+      </div>
+      <div class="grid2">
+        <div class="panel">
+          <h3>The model</h3>
+          <div class="formula">H<sub>ML</sub>(x) = H<sub>physics</sub>(x) · [1 + (k h)² · p(x)]</div>
+          <ul class="clean">
+            <li><b>x</b> = (g, a/h, b/a), the design; <b>H</b> = the plate's response to a unit load in one sine mode.</li>
+            <li><b>H<sub>physics</sub></b> is trained on FSDT energy only; it reproduces FSDT to 0.03%.</li>
+            <li><b>(k h)²</b> is zero for thin plates, so the correction cannot spoil them; <b>p(x)</b> is a small polynomial fitted to 10 TSDT solutions chosen where shear matters most.</li>
+            <li>Any load is a sum of sine modes, so one model handles every load shape.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>The two plate theories</h3>
+          <ul class="clean">
+            <li><b>FSDT</b> (first-order shear deformation): fast, uses a shear correction factor 5/6; a few percent off for thick graded plates.</li>
+            <li><b>TSDT</b> (Reddy third-order): cubic displacement through the thickness, no correction factor; our accurate reference, standing in for FEM or 3D elasticity.</li>
+            <li>Material: Al₂O₃ (E = 380 GPa, ρ = 3800 kg/m³) to Al (70 GPa, 2702 kg/m³), power-law grading V<sub>c</sub> = (1/2 + z/h)<sup>g</sup>, ν = 0.3.</li>
+            <li>Supports: simply supported on all edges (Navier double-sine solution).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>What is not covered yet</h3>
+        <ul class="clean">
+          <li>Other boundary conditions (clamped edges) and irregular shapes, which need FEM.</li>
+          <li>Validation against FEM, 3D elasticity or experiments; TSDT itself is a plate theory.</li>
+          <li>Point loads, thermal loads, buckling and nonlinear deformation.</li>
+          <li>A neural-network version of the same physics loss (the polynomial form was chosen for a clean comparison).</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="wrap">FG Plate Lab runs the project's FSDT/TSDT Navier solvers and the frozen H3 surrogates (seed 11) in your browser; tested against the Python code to about 10⁻¹². Source: mtp-fg-plate/demo.</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+<script type="application/json" id="lab-data">/*DATA*/</script>
+<script id="fgmath">/*MATH*/</script>
+<script>
+(function () {
+  'use strict';
+  const M = window.FGMath;
+  const DATA = JSON.parse(document.getElementById('lab-data').textContent);
+  const S = M.makeSurrogate(DATA.model);
+  const ODD15 = M.oddModes(15), ODD25 = M.oddModes(25), SQ15 = M.squareModes(15), SQ25 = M.squareModes(25);
+  const $ = id => document.getElementById(id);
+  const hasPlotly = typeof window.Plotly !== 'undefined';
+  const MODELS = [
+    { key: 'T', name: 'Accurate theory', sub: 'TSDT (reference)', color: '--tsdt' },
+    { key: 'F', name: 'Cheap theory', sub: 'FSDT, no data', color: '--fsdt' },
+    { key: 'C', name: 'Our ML model', sub: 'physics + 10 accurate solutions', color: '--ml' },
+    { key: 'D', name: 'Data-only ML', sub: 'same 10 solutions, no physics', color: '--data' },
+  ];
+  const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const fmt = (v, d = 3) => (Math.abs(v) >= 1000 ? v.toFixed(0) : v.toPrecision(d));
+  function chip(err) {
+    const e = Math.abs(err) * 100, cls = e < 0.5 ? 'good' : e < 2 ? 'warn' : 'bad';
+    const txt = e < 0.001 ? '<0.001%' : (e < 10 ? e.toFixed(e < 0.1 ? 3 : 2) : e.toFixed(0)) + '%';
+    return `<span class="chip ${cls}">${err >= 0 ? '+' : '−'}${txt.replace('<', '&lt;')}</span>`;
+  }
+  function limitChip(ratio, over, word) {
+    const cls = over <= 1e-4 ? 'good' : over < 0.02 ? 'warn' : 'bad';
+    return `<span class="chip ${cls}">${(100 * ratio).toFixed(2)}% ${word}</span>`;
+  }
+  function hexToRgb(hex) {
+    const h = hex.replace('#', '').trim(), full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
+    const n = parseInt(full, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+  function baseLayout(extra) {
+    const ink = css('--ink'), muted = css('--muted'), line = css('--line');
+    return Object.assign({
+      paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+      font: { family: 'IBM Plex Sans, system-ui, sans-serif', color: ink, size: 12 },
+      margin: { l: 56, r: 16, t: 10, b: 46 },
+      xaxis: { gridcolor: line, zerolinecolor: line, linecolor: line, tickfont: { color: muted } },
+      yaxis: { gridcolor: line, zerolinecolor: line, linecolor: line, tickfont: { color: muted } },
+      legend: { orientation: 'h', y: -0.22, font: { size: 11 } },
+    }, extra || {});
+  }
+  const CONFIG = { displaylogo: false, responsive: true, modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'lasso2d', 'select2d'] };
+  function plot(id, traces, layout) {
+    const el = $(id);
+    if (!hasPlotly) { el.innerHTML = '<p class="note">Charts need the Plotly library, which could not load (check the internet connection).</p>'; return; }
+    Plotly.react(el, traces, layout, CONFIG);
+  }
+
+  // ======================================================= SIMULATOR
+  const sim = { g: 4, r: 6, lam: 1, a: 0.5, q: 1e6, load: { type: 'uniform', x0: 0.35, y0: 0.6, sigma: 0.1 } };
+  const rFromSlider = v => Math.exp(Math.log(5) + (Math.log(100) - Math.log(5)) * v / 1000);
+  function modesFor(load, k) { return load.type === 'sine' ? [[1, 1]] : load.type === 'uniform' ? (k === 15 ? ODD15 : ODD25) : (k === 15 ? SQ15 : SQ25); }
+  function freqHz(omegaHat, r, a) { return M.physical.frequency(omegaHat, { a }, r); }
+
+  function evaluateAll(g, r, lam, load, gridN) {
+    const out = {};
+    const mT = modesFor(load, 25), mS = modesFor(load, 15);
+    const QT = M.loadCoefficients(load, mT), QS = M.loadCoefficients(load, mS);
+    const maxOf = (Hw, Q, modes) => (load.type === 'patch' ? M.maxAbs(M.field(Hw, Q, modes, gridN)) : Math.abs(M.centreValue(Hw, Q, modes)));
+    const HT = M.solverHw(g, r, lam, mT, 'TSDT'), HF = M.solverHw(g, r, lam, mT, 'FSDT');
+    out.T = { wHat: maxOf(HT, QT, mT), omegaHat: M.solverOmegaHat(g, r, lam, 'TSDT'), Hw: HT, Q: QT, modes: mT };
+    out.F = { wHat: maxOf(HF, QT, mT), omegaHat: M.solverOmegaHat(g, r, lam, 'FSDT') };
+    for (const arm of ['C', 'D']) {
+      const H = S.Hw(arm, g, r, lam, mS);
+      out[arm] = { wHat: maxOf(H, QS, mS), omegaHat: S.omegaHat(arm, g, r, lam) };
+    }
+    return out;
+  }
+
+  function renderProfile() {
+    const g = sim.g, stops = [], cer = hexToRgb(css('--ceramic')), met = hexToRgb(css('--metal'));
+    for (let i = 0; i <= 20; i++) {
+      const zeta = 1 - i / 20;                                // top (ceramic) to bottom
+      const vc = g === 0 ? 1 : Math.pow(zeta, g);
+      const c = cer.map((v, k) => Math.round(vc * v + (1 - vc) * met[k]));
+      stops.push(`rgb(${c.join(',')}) ${(100 * i / 20).toFixed(0)}%`);
+    }
+    $('profile-bar').style.background = `linear-gradient(180deg, ${stops.join(', ')})`;
+    const meanVc = 1 / (g + 1);
+    $('profile-mid').textContent = `average ceramic ${(100 * meanVc).toFixed(0)}%`;
+  }
+
+  let animOn = false, animId = 0, lastSurface = null;
+  function renderSimulator() {
+    const { g, r, lam, a, q, load } = sim, h = a / r;
+    $('out-g').textContent = g.toFixed(2);
+    $('hint-g').textContent = g === 0 ? 'pure ceramic' : g < 0.5 ? 'ceramic-rich' : g < 3 ? 'graded' : 'metal-rich';
+    $('out-r').textContent = r.toFixed(1);
+    $('hint-r').textContent = `h = ${(1000 * h).toPrecision(3)} mm · ${r < 10 ? 'thick plate' : r < 30 ? 'moderately thick' : 'thin plate'}`;
+    $('out-lam').textContent = lam.toFixed(2);
+    $('out-sigma').textContent = load.sigma.toFixed(3);
+    $('out-x0').textContent = load.x0.toFixed(2);
+    $('out-y0').textContent = load.y0.toFixed(2);
+    renderProfile();
+
+    const res = evaluateAll(g, r, lam, load, 30);
+    const scaleW = q * a ** 4 / (M.EC * h ** 3);               // w = scaleW * w_hat
+    const wT = res.T.wHat * scaleW, fT = freqHz(res.T.omegaHat, r, a);
+    const mass = M.physical.mass(h, g), cer = M.physical.ceramic(h, g);
+    $('plate-facts').innerHTML = `<span>thickness <b>${(1000 * h).toPrecision(3)} mm</b></span><span>mass <b>${mass.toFixed(1)} kg/m²</b></span><span>ceramic <b>${(1000 * cer).toPrecision(3)} mm</b></span><span>w/h <b>${(wT / h).toExponential(1)}</b></span>`;
+    $('readout').innerHTML = MODELS.map(m => {
+      const w = res[m.key].wHat * scaleW, f = freqHz(res[m.key].omegaHat, r, a);
+      const ew = m.key === 'T' ? '<span class="chip ref">reference</span>' : chip(w / wT - 1);
+      const ef = m.key === 'T' ? '<span class="chip ref">reference</span>' : chip(f / fT - 1);
+      return `<tr><td><span class="swatch" style="background:var(${m.color})"></span><span class="model-name">${m.name}</span><span class="model-sub">${m.sub}</span></td>
+        <td class="num"><span class="mono">${fmt(1000 * w, 4)} mm</span><br>${ew}</td>
+        <td class="num"><span class="mono">${fmt(f, 4)} Hz</span><br>${ef}</td></tr>`;
+    }).join('');
+    $('readout-note').textContent = load.type === 'patch'
+      ? 'Max deflection is taken over a 31 × 31 grid; patch loads need many modes, which the ML model covers up to 15 × 15.'
+      : 'Under symmetric loads the maximum deflection is at the plate centre.';
+    renderSurface(res, scaleW, fT);
+    scheduleSweep();
+  }
+
+  function surfaceData(res, scaleW, N) {
+    const Z = M.field(res.T.Hw, res.T.Q, res.T.modes, N);
+    const xs = [], ys = [];
+    for (let i = 0; i <= N; i++) { xs.push(sim.a * i / N); ys.push(sim.a * sim.lam * i / N); }
+    return { xs, ys, z: Z.map(row => Array.from(row, v => -1000 * scaleW * v)) };
+  }
+  function renderSurface(res, scaleW, fT) {
+    if (!hasPlotly) { $('plot-surface').innerHTML = '<p class="note">The 3D view needs the Plotly library (internet connection).</p>'; return; }
+    const N = 30, d = surfaceData(res, scaleW, N);
+    let zmin = 0; d.z.forEach(row => row.forEach(v => { if (v < zmin) zmin = v; }));
+    lastSurface = { d, zmin, fT };
+    const ink = css('--ink'), muted = css('--muted'), line = css('--line');
+    const axis = t => ({ title: { text: t, font: { size: 11, color: muted } }, gridcolor: line, color: muted, backgroundcolor: 'rgba(0,0,0,0)', showbackground: false });
+    const scale = [[0, css('--accent')], [0.55, css('--ml')], [1, css('--ceramic')]];
+    const layout = {
+      paper_bgcolor: 'rgba(0,0,0,0)', font: { family: 'IBM Plex Sans, system-ui, sans-serif', color: ink, size: 11 },
+      margin: { l: 0, r: 0, t: 0, b: 0 }, uirevision: 'keep',
+      scene: { xaxis: axis('x (m)'), yaxis: axis('y (m)'), zaxis: Object.assign(axis('w (mm)'), { range: animOn ? [1.15 * zmin, -1.15 * zmin] : [1.15 * zmin, -0.15 * zmin] }),
+        aspectmode: 'manual', aspectratio: { x: 1, y: sim.lam, z: 0.45 }, camera: { eye: { x: 1.5, y: -1.55, z: 0.9 } } },
+    };
+    Plotly.react('plot-surface', [{ type: 'surface', x: d.xs, y: d.ys, z: d.z, colorscale: scale, cmin: zmin, cmax: animOn ? -zmin : 0,
+      colorbar: { title: { text: 'mm', side: 'top' }, thickness: 12, len: 0.6, tickfont: { color: muted } },
+      contours: { z: { show: true, usecolormap: true, highlightcolor: ink, project: { z: false } } },
+      hovertemplate: 'x %{x:.3f} m<br>y %{y:.3f} m<br>w %{z:.4f} mm<extra></extra>' }], layout, CONFIG);
+    $('surf-note').textContent = animOn ? `first mode, ${fT.toFixed(0)} Hz, slowed to 1 cycle per second` : 'accurate theory (TSDT), exaggerated';
+  }
+  function animate() {
+    if (!animOn || !lastSurface || !hasPlotly) return;
+    const { d, zmin } = lastSurface, N = d.xs.length - 1;
+    const t = performance.now() / 1000, c = Math.cos(2 * Math.PI * t);
+    const z = [];
+    for (let j = 0; j <= N; j++) { const row = []; for (let i = 0; i <= N; i++) row.push(zmin * c * Math.sin(Math.PI * i / N) * Math.sin(Math.PI * j / N)); z.push(row); }
+    Plotly.restyle('plot-surface', { z: [z] });
+    animId = setTimeout(() => requestAnimationFrame(animate), 50);
+  }
+
+  let sweepTimer = 0;
+  function scheduleSweep() { clearTimeout(sweepTimer); sweepTimer = setTimeout(renderSweep, 220); }
+  function renderSweep() {
+    const { g, lam, load } = sim, rs = [], series = { F: [], C: [], D: [] };
+    for (let i = 0; i < 22; i++) rs.push(Math.exp(Math.log(5) + (Math.log(100) - Math.log(5)) * i / 21));
+    for (const r of rs) {
+      const res = evaluateAll(g, r, lam, load, 20);
+      for (const k of ['F', 'C', 'D']) series[k].push(Math.max(1e-4, 100 * Math.abs(res[k].wHat / res.T.wHat - 1)));
+    }
+    const traces = [
+      { name: 'Cheap theory (FSDT)', x: rs, y: series.F, mode: 'lines', line: { color: css('--fsdt'), width: 2.5 } },
+      { name: 'Our ML model', x: rs, y: series.C, mode: 'lines', line: { color: css('--ml'), width: 2.5 } },
+      { name: 'Data-only ML', x: rs, y: series.D, mode: 'lines', line: { color: css('--data'), width: 2, dash: 'dot' } },
+    ];
+    const layout = baseLayout({
+      xaxis: Object.assign(baseLayout().xaxis, { type: 'log', title: { text: 'slenderness a/h (thick ← → thin)', font: { size: 11 } }, range: [Math.log10(5), 2],
+        tickvals: [5, 7, 10, 15, 20, 30, 50, 70, 100], ticktext: ['5', '7', '10', '15', '20', '30', '50', '70', '100'] }),
+      yaxis: Object.assign(baseLayout().yaxis, { type: 'log', title: { text: '|error| in max deflection (%)', font: { size: 11 } }, range: [-4, 2.3],
+        tickvals: [1e-4, 1e-3, 1e-2, 0.1, 1, 10, 100], ticktext: ['0.0001', '0.001', '0.01', '0.1', '1', '10', '100'] }),
+      shapes: [{ type: 'line', x0: sim.r, x1: sim.r, yref: 'paper', y0: 0, y1: 1, line: { color: css('--muted'), width: 1, dash: 'dash' } }],
+      annotations: [{ x: Math.log10(sim.r), y: 1, yref: 'paper', xref: 'x', text: 'this plate', showarrow: false, yanchor: 'bottom', font: { size: 10, color: css('--muted') } }],
+      margin: { l: 60, r: 16, t: 18, b: 46 },
+    });
+    plot('plot-sweep', traces, layout);
+  }
+
+  function bindSim() {
+    const upd = () => { renderSimulator(); };
+    $('in-g').addEventListener('input', e => { sim.g = +e.target.value; upd(); });
+    $('in-r').addEventListener('input', e => { sim.r = rFromSlider(+e.target.value); upd(); });
+    $('in-lam').addEventListener('input', e => { sim.lam = +e.target.value; upd(); });
+    $('in-a').addEventListener('change', e => { const v = +e.target.value; if (v > 0) { sim.a = v; upd(); } });
+    $('in-q').addEventListener('change', e => { const v = +e.target.value; if (v > 0) { sim.q = 1000 * v; upd(); } });
+    $('in-sigma').addEventListener('input', e => { sim.load.sigma = +e.target.value; upd(); });
+    $('in-x0').addEventListener('input', e => { sim.load.x0 = +e.target.value; upd(); });
+    $('in-y0').addEventListener('input', e => { sim.load.y0 = +e.target.value; upd(); });
+    document.querySelectorAll('[data-load]').forEach(b => b.addEventListener('click', () => {
+      sim.load.type = b.dataset.load;
+      document.querySelectorAll('[data-load]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      $('patch-controls').hidden = sim.load.type !== 'patch';
+      upd();
+    }));
+    $('in-animate').addEventListener('change', e => {
+      animOn = e.target.checked; clearTimeout(animId);
+      renderSimulator();
+      if (animOn) animate();
+    });
+  }
+
+  // ======================================================= DESIGN STUDIO
+  const PRESETS = {
+    main: { a: 0.5, lam: 1.5, q: 1000, w: 0.14, f: 1200, c: 20, nolimit: false },
+    thin: { a: 1.0, lam: 1.0, q: 10, w: 0.15, f: 180, c: 15, nolimit: false },
+  };
+  function readProblem() {
+    const nolimit = $('d-nolimit').checked;
+    return { a: +$('d-a').value, aspect: Math.min(2, Math.max(0.5, +$('d-lam').value)), q0: 1000 * +$('d-q').value,
+      wLim: +$('d-w').value / 1000, fMin: +$('d-f').value, ceramicMax: nolimit ? 0 : +$('d-c').value / 1000 };
+  }
+  function setPreset(p) {
+    $('d-a').value = p.a; $('d-lam').value = p.lam; $('d-q').value = p.q; $('d-w').value = p.w; $('d-f').value = p.f;
+    $('d-c').value = p.c; $('d-nolimit').checked = p.nolimit; $('out-dc').textContent = p.nolimit ? 'none' : p.c.toFixed(1);
+    $('d-c').disabled = p.nolimit;
+  }
+  const ARMS = [
+    { key: 'C', name: 'Our ML model', sub: 'physics + 10 accurate solutions', color: '--ml' },
+    { key: 'F', name: 'Cheap theory', sub: 'FSDT physics only', color: '--fsdt' },
+    { key: 'D', name: 'Data-only ML', sub: '10 accurate solutions, no physics', color: '--data' },
+  ];
+  const evalFor = key => {                     // 'F' = the label-free FSDT model P, as in experiment H3
+    const arm = key === 'F' ? 'P' : key;
+    return (g, r, lam) => ({ wHat: S.Hw(arm, g, r, lam, ODD15).reduce((s, v, i) => s + v * Q15[i] * C15[i], 0), omegaHat: S.omegaHat(arm, g, r, lam) });
+  };
+  const Q15 = M.loadCoefficients({ type: 'uniform' }, ODD15);
+  const C15 = ODD15.map(([m, n]) => Math.sin(m * Math.PI / 2) * Math.sin(n * Math.PI / 2));
+  const QT = M.loadCoefficients({ type: 'uniform' }, ODD25);
+  const verifyTSDT = (g, r, lam) => ({ wHat: M.centreValue(M.solverHw(g, r, lam, ODD25, 'TSDT'), QT, ODD25), omegaHat: M.solverOmegaHat(g, r, lam, 'TSDT') });
+
+  const design = { results: null, exact: null, problem: null };
+  function runDesign() {
+    const p = readProblem(), btn = $('btn-design');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Designing…';
+    design.exact = null;
+    setTimeout(() => {
+      const t0 = performance.now(), results = {};
+      for (const arm of ARMS) {
+        const ts = performance.now(), r = M.optimize(evalFor(arm.key), p);
+        results[arm.key] = { opt: r, ms: performance.now() - ts };
+        if (r.feasible) {
+          const d = r.design, v = verifyTSDT(d.g, d.r, p.aspect);
+          results[arm.key].check = { w: M.physical.deflection(v.wHat, p, d.r), f: M.physical.frequency(v.omegaHat, p, d.r) };
+        }
+      }
+      design.results = results; design.problem = p;
+      renderDesignCards(); renderMap(); renderTrade();
+      btn.disabled = false; btn.textContent = 'Design the lightest plate';
+      $('exact-note').textContent = `Designed with all three models in ${(performance.now() - t0).toFixed(0)} ms. The exact optimum needs thousands of accurate analyses; the ML route needs one check.`;
+    }, 30);
+  }
+  function renderDesignCards() {
+    const { results, problem: p, exact } = design;
+    if (!results) return;
+    const cards = ARMS.map(arm => {
+      const r = results[arm.key];
+      if (!r.opt.feasible) return `<div class="card"><div class="card-head"><span><span class="swatch" style="background:var(${arm.color})"></span><span class="model-name">${arm.name}</span><span class="model-sub">${arm.sub}</span></span></div><div class="status bad">No allowed design within 5 ≤ a/h ≤ 100, 0 ≤ g ≤ 8</div></div>`;
+      const d = r.opt.design, c = r.check;
+      const overW = c.w / p.wLim - 1, overF = 1 - c.f / p.fMin, worst = Math.max(overW, overF);
+      const status = worst <= 1e-4 ? `<div class="status good">Passes the accurate check</div>`
+        : worst < 0.02 ? `<div class="status warn">Over a limit by ${(100 * worst).toFixed(2)}%: one correction step needed</div>`
+          : `<div class="status bad">Over a limit by ${(100 * worst).toFixed(1)}%</div>`;
+      const gap = exact && exact.feasible ? `<dt>vs exact optimum</dt><dd>${d.mass / exact.design.mass - 1 >= 0 ? '+' : ''}${(100 * (d.mass / exact.design.mass - 1)).toFixed(2)}%</dd>` : '';
+      return `<div class="card">
+        <div class="card-head"><span><span class="swatch" style="background:var(${arm.color})"></span><span class="model-name">${arm.name}</span><span class="model-sub">${arm.sub}</span></span><span class="chip ref">${r.ms.toFixed(0)} ms</span></div>
+        <dl class="kv"><dt>gradient index g</dt><dd>${d.g.toFixed(2)}</dd><dt>thickness h</dt><dd>${(1000 * d.h).toFixed(1)} mm (a/h ${d.r.toFixed(1)})</dd>
+        <dt>areal mass</dt><dd>${d.mass.toFixed(2)} kg/m²</dd><dt>ceramic use</dt><dd>${(1000 * d.cer).toFixed(1)} mm</dd>${gap}</dl>
+        <div class="label">Accurate check (TSDT)</div>
+        <dl class="kv"><dt>deflection</dt><dd>${(1000 * c.w).toFixed(4)} mm ${limitChip(c.w / p.wLim, overW, 'of limit')}</dd>
+        <dt>1st frequency</dt><dd>${c.f.toFixed(1)} Hz ${limitChip(c.f / p.fMin, overF, 'of minimum')}</dd></dl>
+        ${status}</div>`;
+    });
+    if (exact) {
+      cards.push(exact.feasible
+        ? `<div class="card"><div class="card-head"><span><span class="swatch" style="background:var(--tsdt)"></span><span class="model-name">Exact optimum</span><span class="model-sub">optimized directly with TSDT</span></span><span class="chip ref">${(exact.ms / 1000).toFixed(1)} s</span></div>
+          <dl class="kv"><dt>gradient index g</dt><dd>${exact.design.g.toFixed(2)}</dd><dt>thickness h</dt><dd>${(1000 * exact.design.h).toFixed(1)} mm (a/h ${exact.design.r.toFixed(1)})</dd>
+          <dt>areal mass</dt><dd>${exact.design.mass.toFixed(2)} kg/m²</dd><dt>ceramic use</dt><dd>${(1000 * exact.design.cer).toFixed(1)} mm</dd>
+          <dt>accurate analyses</dt><dd>${exact.count.toLocaleString()}</dd></dl>
+          <div class="status good">Best possible design (reference)</div></div>`
+        : `<div class="card"><div class="model-name">Exact optimum</div><div class="status bad">No allowed design exists for these limits.</div></div>`);
+    }
+    $('design-cards').innerHTML = cards.join('');
+  }
+  function runExact() {
+    const p = readProblem(), btn = $('btn-exact');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Optimizing with TSDT…';
+    const done = res => {
+      design.exact = res; btn.disabled = false; btn.textContent = 'Find exact optimum with accurate theory';
+      if (!design.results || JSON.stringify(design.problem) !== JSON.stringify(p)) { design.problem = p; runDesign(); return; }
+      renderDesignCards(); renderMap(); renderTrade();
+    };
+    try {
+      const src = document.getElementById('fgmath').textContent + `
+        self.onmessage = e => { const p = e.data, M = self.FGMath, odd = M.oddModes(25), Q = M.loadCoefficients({ type: 'uniform' }, odd);
+          const ev = (g, r, lam) => ({ wHat: M.centreValue(M.solverHw(g, r, lam, odd, 'TSDT'), Q, odd), omegaHat: M.solverOmegaHat(g, r, lam, 'TSDT') });
+          const t0 = performance.now(), res = M.optimize(ev, p); res.ms = performance.now() - t0; delete res.profile; self.postMessage(res); };`;
+      const worker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+      worker.onmessage = e => { done(e.data); worker.terminate(); };
+      worker.onerror = () => { worker.terminate(); fallback(); };
+      worker.postMessage(p);
+    } catch (err) { fallback(); }
+    function fallback() {
+      setTimeout(() => { const t0 = performance.now(), res = M.optimize(verifyTSDT, p); res.ms = performance.now() - t0; done(res); }, 30);
+    }
+  }
+  function renderMap() {
+    const p = design.problem; if (!p) return;
+    const map = M.designMap(evalFor('C'), p, 45, 45);
+    const hs = map.rs.map(r => 1000 * p.a / r);
+    const traces = [
+      { type: 'heatmap', x: map.gs, y: hs, z: map.ok, showscale: false, showlegend: false, hoverinfo: 'skip', zmin: 0, zmax: 1,
+        colorscale: [[0, 'rgba(0,0,0,0)'], [1, `rgba(${hexToRgb(css('--ml')).join(',')},0.2)`]] },
+      { type: 'contour', x: map.gs, y: hs, z: map.mass, showscale: false, showlegend: false, contours: { coloring: 'none', showlabels: true, labelfont: { size: 10, color: css('--muted') } },
+        line: { color: css('--muted'), width: 0.8 }, ncontours: 14, hovertemplate: 'g %{x:.2f}<br>h %{y:.1f} mm<br>mass %{z:.1f} kg/m²<extra></extra>' },
+    ];
+    const sym = { C: 'star', F: 'square', D: 'triangle-up' };
+    for (const arm of ARMS) {
+      const r = design.results && design.results[arm.key];
+      if (r && r.opt.feasible) traces.push({ type: 'scatter', mode: 'markers', name: arm.name, x: [r.opt.design.g], y: [1000 * r.opt.design.h],
+        marker: { symbol: sym[arm.key], size: arm.key === 'C' ? 16 : 12, color: css(arm.color), line: { color: css('--surface'), width: 1.5 } } });
+    }
+    if (design.exact && design.exact.feasible) traces.push({ type: 'scatter', mode: 'markers', name: 'Exact optimum (TSDT)', x: [design.exact.design.g], y: [1000 * design.exact.design.h],
+      marker: { symbol: 'circle-open', size: 20, color: css('--tsdt'), line: { width: 2.5 } } });
+    plot('plot-map', traces, baseLayout({
+      xaxis: Object.assign(baseLayout().xaxis, { title: { text: 'gradient index g', font: { size: 11 } } }),
+      yaxis: Object.assign(baseLayout().yaxis, { title: { text: 'thickness h (mm)', font: { size: 11 } } }),
+      legend: { orientation: 'h', y: -0.2, font: { size: 11 } }, margin: { l: 60, r: 16, t: 10, b: 50 },
+    }));
+  }
+  function renderTrade() {
+    const p = design.problem; if (!p) return;
+    const prof = M.profile(evalFor('C'), p, 61).points.filter(q => q.r);
+    const traces = [{ type: 'scatter', mode: 'lines', name: 'ML model: lightest plate for each g', x: prof.map(q => 1000 * q.cer), y: prof.map(q => q.mass),
+      line: { color: css('--ml'), width: 2.5 }, customdata: prof.map(q => q.g), hovertemplate: 'g %{customdata:.2f}<br>ceramic %{x:.1f} mm<br>mass %{y:.1f} kg/m²<extra></extra>' }];
+    const isMain = Math.abs(p.a - 0.5) < 1e-9 && Math.abs(p.aspect - 1.5) < 1e-9 && Math.abs(p.q0 - 1e6) < 1e-3 && Math.abs(p.wLim - 1.4e-4) < 1e-12 && Math.abs(p.fMin - 1200) < 1e-9;
+    if (isMain) {
+      const ref = DATA.evidence.h3_reference_front;
+      traces.push({ type: 'scatter', mode: 'markers', name: 'Exact optima from the report (TSDT)', x: ref.map(q => q.ceramic_mm), y: ref.map(q => q.mass),
+        marker: { color: css('--tsdt'), size: 9, symbol: 'circle-open', line: { width: 2 } } });
+    }
+    const r = design.results && design.results.C;
+    if (r && r.opt.feasible) traces.push({ type: 'scatter', mode: 'markers', name: 'This design', x: [1000 * r.opt.design.cer], y: [r.opt.design.mass],
+      marker: { symbol: 'star', size: 16, color: css('--ml'), line: { color: css('--surface'), width: 1.5 } } });
+    const shapes = p.ceramicMax > 0 ? [{ type: 'line', x0: 1000 * p.ceramicMax, x1: 1000 * p.ceramicMax, yref: 'paper', y0: 0, y1: 1, line: { color: css('--warn'), dash: 'dash', width: 1.5 } }] : [];
+    plot('plot-trade', traces, baseLayout({
+      xaxis: Object.assign(baseLayout().xaxis, { title: { text: 'ceramic use h/(g+1) (mm)', font: { size: 11 } } }),
+      yaxis: Object.assign(baseLayout().yaxis, { title: { text: 'areal mass (kg/m²)', font: { size: 11 } } }),
+      shapes, margin: { l: 60, r: 16, t: 10, b: 50 }, legend: { orientation: 'h', y: -0.2, font: { size: 11 } },
+    }));
+    if (prof.length > 1) {
+      const pure = prof[0], metal = prof[prof.length - 1];
+      $('trade-note').textContent = `Moving from pure ceramic (g = 0) to g = 8 cuts ceramic use by ${(100 * (1 - metal.cer / pure.cer)).toFixed(0)}% and changes mass by ${(100 * (metal.mass / pure.mass - 1)).toFixed(1)}%.` + (isMain ? ' Circles: exact optima from the report (H3).' : '') + (p.ceramicMax > 0 ? ' Dashed line: your ceramic budget.' : '');
+    }
+  }
+  function bindDesign() {
+    $('preset-main').addEventListener('click', () => { setPreset(PRESETS.main); runDesign(); });
+    $('preset-thin').addEventListener('click', () => { setPreset(PRESETS.thin); runDesign(); });
+    $('d-c').addEventListener('input', e => { $('out-dc').textContent = (+e.target.value).toFixed(1); });
+    $('d-nolimit').addEventListener('change', e => { $('d-c').disabled = e.target.checked; $('out-dc').textContent = e.target.checked ? 'none' : (+$('d-c').value).toFixed(1); });
+    $('btn-design').addEventListener('click', runDesign);
+    $('btn-exact').addEventListener('click', runExact);
+  }
+
+  // ======================================================= EVIDENCE
+  function renderEvidence() {
+    const ev = DATA.evidence, q = ev.h3_decisions, sec = ev.h3_secondary;
+    const e5 = ev.e5_fresh_curves;
+    const tiles = [
+      ['10', 'accurate solutions train the ML model (data-only needs about 140)'],
+      [`${e5['M-S@P2']['10'].median.toFixed(3)}%`, `median error on 200 new designs; 95th percentile ${e5['M-S@P2']['10'].p95.toFixed(2)}% (E5)`],
+      [`${(100 * q.Q5.worst_seed_ratio).toFixed(1)}%`, `of the accurate analyses of direct optimization (${Math.max(...Object.values(q.Q5.c_total_tsdt_analyses))} vs ${q.Q5.direct_slsqp_total_tsdt_analyses.toLocaleString()}, H3)`],
+      ['−79%', 'ceramic for +14.5% mass in the report design problem (H3)'],
+    ];
+    $('tiles').innerHTML = tiles.map(([b, t]) => `<div class="tile"><span class="big">${b}</span><p>${t}</p></div>`).join('');
+
+    const Ns = [10, 20, 40, 70, 140];
+    const line = (arm, stat, name, color, dash) => ({ x: Ns, y: Ns.map(n => e5[arm][String(n)] ? e5[arm][String(n)][stat] : null), name, mode: 'lines+markers',
+      line: { color, width: 2.5, dash }, marker: { size: 6 } });
+    const phys = e5.P2['0'];
+    plot('plot-e5', [
+      line('M-S@P2', 'median', 'Our ML model', css('--ml'), 'solid'), line('M-S@P2', 'p95', 'Our ML model (95th pct)', css('--ml'), 'dash'),
+      line('D', 'median', 'Data-only ML', css('--data'), 'solid'), line('D', 'p95', 'Data-only ML (95th pct)', css('--data'), 'dash'),
+      { x: [10, 140], y: [phys.median, phys.median], name: 'Physics only (0 solutions)', mode: 'lines', line: { color: css('--fsdt'), width: 2 } },
+      { x: [10, 140], y: [phys.p95, phys.p95], name: 'Physics only (95th pct)', mode: 'lines', line: { color: css('--fsdt'), width: 2, dash: 'dash' } },
+    ], baseLayout({
+      xaxis: Object.assign(baseLayout().xaxis, { type: 'log', title: { text: 'accurate (TSDT) solutions used for training', font: { size: 11 } }, tickvals: Ns }),
+      yaxis: Object.assign(baseLayout().yaxis, { type: 'log', title: { text: 'field error (%)', font: { size: 11 } },
+        tickvals: [0.01, 0.1, 1, 10, 100], ticktext: ['0.01', '0.1', '1', '10', '100'] }),
+      legend: { orientation: 'h', y: -0.3, font: { size: 10 } }, margin: { l: 56, r: 16, t: 10, b: 60 },
+    }));
+
+    const fams = ['L1', 'L2', 'L3', 'L4'], famNames = ['training-type', 'uniform', 'wide patch', 'narrow patch'];
+    const bar = (arm, N, name, color) => ({ type: 'bar', name, x: famNames, y: fams.map(f => ev.h2_table[f][arm][N].p95), marker: { color } });
+    plot('plot-h2', [
+      bar('C', '10', 'Our ML model (15×15 modes)', css('--ml')), bar('A', '10', 'ML model, 5×5 modes', css('--muted')),
+      bar('P-ext', '0', 'Physics only', css('--fsdt')), bar('D-ext', '10', 'Data-only ML', css('--data')),
+    ], baseLayout({
+      barmode: 'group', yaxis: Object.assign(baseLayout().yaxis, { type: 'log', title: { text: '95th percentile error (%)', font: { size: 11 } },
+        range: [-1, Math.log10(150)], tickvals: [0.1, 0.3, 1, 3, 10, 30, 100], ticktext: ['0.1', '0.3', '1', '3', '10', '30', '100'] }),
+      legend: { orientation: 'h', y: -0.22, font: { size: 10 } }, margin: { l: 56, r: 16, t: 10, b: 60 },
+    }));
+
+    const costs = [
+      ['Direct optimization on TSDT', q.Q5.direct_slsqp_total_tsdt_analyses, css('--muted')],
+      ['Data-only ML + checks', Math.max(...Object.values(sec.D.closed_loop.total_analyses_including_labels)), css('--data')],
+      ['Physics only + checks', Math.max(...Object.values(sec.P.closed_loop.total_analyses_including_labels)), css('--fsdt')],
+      ['Our ML model + checks', Math.max(...Object.values(q.Q5.c_total_tsdt_analyses)), css('--ml')],
+    ];
+    plot('plot-h3', [{ type: 'bar', orientation: 'h', x: costs.map(c => c[1]), y: costs.map(c => c[0]), marker: { color: costs.map(c => c[2]) },
+      text: costs.map(c => c[1].toLocaleString()), textposition: 'outside', cliponaxis: false, hovertemplate: '%{y}: %{x}<extra></extra>' }],
+      baseLayout({ xaxis: Object.assign(baseLayout().xaxis, { title: { text: 'accurate analyses for 100 problems (worst seed)', font: { size: 11 } }, range: [0, 9200] }),
+        yaxis: Object.assign(baseLayout().yaxis, { automargin: true }), margin: { l: 10, r: 30, t: 10, b: 46 }, showlegend: false }));
+  }
+
+  // ======================================================= ROUTING, THEME, START
+  const VIEWS = ['simulator', 'design', 'evidence', 'method'];
+  const rendered = {};
+  function show() {
+    const name = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'simulator';
+    document.querySelectorAll('[data-view-panel]').forEach(s => { s.hidden = s.dataset.viewPanel !== name; });
+    document.querySelectorAll('nav.tabs a').forEach(a => a.setAttribute('aria-current', a.dataset.view === name ? 'page' : 'false'));
+    if (name === 'design' && !rendered.design) { rendered.design = true; runDesign(); }
+    if (name === 'evidence' && !rendered.evidence) { rendered.evidence = true; renderEvidence(); }
+    if (hasPlotly) setTimeout(() => document.querySelectorAll(`[data-view-panel="${name}"] .plot`).forEach(el => { if (el.data) Plotly.Plots.resize(el); }), 30);
+  }
+  function rerenderAll() {
+    renderSimulator();
+    if (rendered.design) { renderMap(); renderTrade(); }
+    if (rendered.evidence) renderEvidence();
+  }
+  window.addEventListener('hashchange', show);
+  try { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', rerenderAll); } catch (e) { /* older browsers */ }
+  new MutationObserver(rerenderAll).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  setPreset(PRESETS.main);
+  sim.g = +$('in-g').value; sim.r = rFromSlider(+$('in-r').value); sim.lam = +$('in-lam').value;
+  bindSim(); bindDesign();
+  renderSimulator();
+  show();
+})();
+</script>

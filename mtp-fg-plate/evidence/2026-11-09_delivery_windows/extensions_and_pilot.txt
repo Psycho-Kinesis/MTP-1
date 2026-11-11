@@ -1,0 +1,24 @@
+
+--- STDERR (warnings preserved) ---
+test_callable_projection_known_modes_and_uniform (test_extensions.SolverTests.test_callable_projection_known_modes_and_uniform) ... ok
+test_closed_form_all_coefficients_and_equilibrium (test_extensions.SolverTests.test_closed_form_all_coefficients_and_equilibrium) ... ok
+test_essential_and_natural_boundary_conditions (test_extensions.SolverTests.test_essential_and_natural_boundary_conditions) ... ok
+test_exact_moments_against_adaptive_quadrature (test_extensions.SolverTests.test_exact_moments_against_adaptive_quadrature) ... C:\Users\0k\OneDrive\Documents\ChatGPT\MTP 1\mtp-fg-plate\validation\test_extensions.py:42: IntegrationWarning: The occurrence of roundoff error is detected, which prevents 
+  the requested tolerance from being achieved.  The error may be 
+  underestimated.
+  numerical=quad(lambda t:getattr(mat,prop)((t-.5)*h,h)*(t-.5)**k,0,1,
+ok
+test_generalized_eigen_residual_and_mass_orthogonality (test_extensions.SolverTests.test_generalized_eigen_residual_and_mass_orthogonality) ... ok
+test_geometry_modes_and_load_validation (test_extensions.SolverTests.test_geometry_modes_and_load_validation) ... ok
+test_global_flexural_scan_and_homogeneous_decoupling (test_extensions.SolverTests.test_global_flexural_scan_and_homogeneous_decoupling) ... ok
+test_grid_points_and_derivatives (test_extensions.SolverTests.test_grid_points_and_derivatives) ... ok
+test_load_superposition_and_zero_load (test_extensions.SolverTests.test_load_superposition_and_zero_load) ... ok
+test_material_rejects_invalid_parameters (test_extensions.SolverTests.test_material_rejects_invalid_parameters) ... ok
+test_load_identity_normalization_and_signed_even_modes (test_pilot.PilotTests.test_load_identity_normalization_and_signed_even_modes) ... ok
+test_model_scaling_uses_fit_subset_and_serialization (test_pilot.PilotTests.test_model_scaling_uses_fit_subset_and_serialization) ... ok
+test_sampling_reproducibility_ranges_and_unique_groups (test_pilot.PilotTests.test_sampling_reproducibility_ranges_and_unique_groups) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.124s
+
+OK

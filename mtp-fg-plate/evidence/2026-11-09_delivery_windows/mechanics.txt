@@ -1,0 +1,41 @@
+
+=== 1. Isotropic plates vs classical closed-form results ===
+[PASS] thin plate, uniform load, w_max*D/(q a^4) (CPT series)     got 0.00406237  ref 0.00406235  err 5.18e-06
+[PASS] thin plate, sinusoidal load, w_max (exact CPT)             got 0.000400376  ref 0.000400373  err 5.64e-06
+[PASS] thin plate, fundamental frequency (exact CPT)              got 30.4035  ref 30.4036  err 3.64e-06
+[PASS] thick plate a/h=10, omega*h*sqrt(rho/G) (Mindlin FSDT 0.0930) got 0.0930275  ref 0.093  err 2.96e-04
+[PASS] thick plate vs 3D 0.0932 (different-model context)         got 0.0930275  ref 0.0932  err 1.85e-03
+
+=== 2. FG plates (Al/Al2O3) vs published benchmarks, a/h=10, sinusoidal load ===
+[PASS] wbar, n = 0                                                got 0.296067  ref 0.296  err 2.28e-04
+[PASS] wbar, n = 1                                                got 0.588971  ref 0.5889  err 1.21e-04
+[PASS] wbar, pure metal (normalised with ceramic Ec)              got 1.60722  ref 1.607  err 1.39e-04
+
+=== 3. FG plates vs exact neutral-surface closed form (checks B-coupling terms) ===
+[PASS] n=0.5, b/a=1.0, a/h=5                                      got 1.70783e-11  ref 1.70783e-11  err 0.00e+00
+[PASS] n=0.5, b/a=1.5, a/h=20                                     got 1.7608e-09  ref 1.7608e-09  err 5.17e-15
+[PASS] n=2, b/a=1.0, a/h=5                                        got 2.82625e-11  ref 2.82625e-11  err 1.37e-15
+[PASS] n=2, b/a=1.5, a/h=20                                       got 2.93358e-09  ref 2.93358e-09  err 1.42e-14
+[PASS] n=4, b/a=1.0, a/h=5                                        got 3.32287e-11  ref 3.32287e-11  err 1.94e-16
+[PASS] n=4, b/a=1.5, a/h=20                                       got 3.37564e-09  ref 3.37564e-09  err 4.78e-15
+[PASS] n=10, b/a=1.0, a/h=5                                       got 3.88212e-11  ref 3.88212e-11  err 4.99e-16
+[PASS] n=10, b/a=1.5, a/h=20                                      got 3.82022e-09  ref 3.82022e-09  err 1.60e-14
+
+=== 4. Series convergence for uniform load (FG, n=2, a/h=10) ===
+[PASS] centre deflection with m,n <= 9                            got 3.13437e-10  ref 3.13406e-10  err 9.85e-05
+[PASS] centre deflection with m,n <= 19                           got 3.13403e-10  ref 3.13406e-10  err 9.97e-06
+[PASS] centre deflection with m,n <= 49                           got 3.13406e-10  ref 3.13406e-10  err 6.12e-07
+
+=== 5. Independent symbolic Ritz (energy) solution, FSDT ===
+[PASS] deflection, n=0.5, b/a=1.5                                 got 2.26033e-10  ref 2.26033e-10  err 1.26e-15
+[PASS] frequency,  n=0.5, b/a=1.5                                 got 3569.3  ref 3569.3  err 3.28e-13
+[PASS] deflection, n=4, b/a=1.5                                   got 4.3439e-10  ref 4.3439e-10  err 6.66e-15
+[PASS] frequency,  n=4, b/a=1.5                                   got 2788.02  ref 2788.02  err 1.05e-13
+
+23/23 checks passed
+
+--- STDERR (warnings preserved) ---
+C:\Users\0k\OneDrive\Documents\ChatGPT\MTP 1\mtp-fg-plate\validation\ritz_crosscheck.py:39: IntegrationWarning: The occurrence of roundoff error is detected, which prevents 
+  the requested tolerance from being achieved.  The error may be 
+  underestimated.
+  return [quad(lambda zz: f(zz) * zz**k, -h / 2, h / 2, epsabs=0, epsrel=1e-13, limit=200)[0]
