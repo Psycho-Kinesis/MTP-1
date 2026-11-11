@@ -9,6 +9,8 @@ predicts deflection fields and natural frequencies for any design and smooth loa
 pass a TSDT check.
 
 ## Live web app: FG Plate Lab
+**Open it in any browser: https://psycho-kinesis.github.io/MTP-1/**
+
 `streamlit_app.py` serves the interactive lab (plate simulator, design studio, evidence, method). All mechanics run in
 the browser. To run it yourself:
 

@@ -38,7 +38,7 @@ Written 9 November 2026 at the end of a long Claude Code session. This file, tog
 
 ## Where the project lives now
 - **GitHub repository:** https://github.com/Psycho-Kinesis/MTP-1 (all code, docs, results, the web app). A new session can open this repository directly instead of uploading a zip.
-- **Live web app (Streamlit):** deployed from `streamlit_app.py` at the repository root (share.streamlit.io). The same app is `mtp-fg-plate/demo/fg_plate_lab_offline.html` (works offline) and `mtp-fg-plate/demo/web/index.html` (any static host, e.g. GitHub Pages).
+- **Live web app:** https://psycho-kinesis.github.io/MTP-1/ (GitHub Pages, served from the `gh-pages` branch, a copy of `mtp-fg-plate/demo/web/index.html`; after changing the app, rebuild and copy that file to `gh-pages`). `streamlit_app.py` at the repository root can also be deployed on share.streamlit.io from the owner's account. The same app is `mtp-fg-plate/demo/fg_plate_lab_offline.html` (works offline) and `mtp-fg-plate/demo/web/index.html` (any static host, e.g. GitHub Pages).
 - **App internals:** `mtp-fg-plate/demo/` (see CHANGES, ninth update). Rebuild after model changes with `python experiments/export_demo_model.py && python demo/build_demo.py && node demo/test_demo_math.js`.
 
 ## Package history (all zip files of this project)
