@@ -1,0 +1,12 @@
+{
+  "dataset.npz": "4c812a0791a8df541b12050ff9b11dd5f0bb88410656c5e9f72cef5c19a85f2d",
+  "design_coverage.png": "927407822764c3050b965cdfa470b9a38b22a829bc369f51f289b29c936beefa",
+  "designs.csv": "76532585c78fe53bce772b131ee296ffc7490bc878b4c5591d1fabb92d7592ab",
+  "manifest.json": "f0806f144204bce54d8286536092e821da22665dc4145353f060ab6edc144c5a",
+  "sample_load_responses.png": "9cda9d2051a1ec528825dae5c88b8a6f48770fbfe4a9b279325e08f4b4928c83",
+  "scalar_model.npz": "6c8c1fe327527cc5ab992e6a01c1e2fdf3b46daf5c411757f6b0feb27e7d3e90",
+  "scalar_predictions.npz": "b552c7470d2c4214ee2a2a823116f1f8599ee0782535ad32cc96bf0d4800731c",
+  "scalar_test_predictions.png": "9b94b99338c47436b456e02e31ee6ebd24ad4f65ef8290f9662371486f7a4f37",
+  "shape_rank.png": "a325643bd88c7f958e7be9ce5915960761c2ef734dd28039de22e66910245c6f",
+  "split.json": "1343eb545e880b101d45475dc5f7f05cb9fecd989a029fb80169f14c17fbbae2"
+}

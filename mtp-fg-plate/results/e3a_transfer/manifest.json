@@ -1,0 +1,2103 @@
+{
+  "experiment": "E3a physics-informed vs data-only modal transfer at matched capacity",
+  "created_utc": "2026-11-09T16:30:50.363130+00:00",
+  "pilot": {
+    "path": "/home/user/MTP/mtp-fg-plate/results/pilot_200",
+    "dataset_sha256": "4c812a0791a8df541b12050ff9b11dd5f0bb88410656c5e9f72cef5c19a85f2d"
+  },
+  "load_family": "smooth_mixture (25 signed sine modes, unit norm, qscale 1 Pa)",
+  "model_class": "H~(x): tensor Legendre polynomial, total degree d, fixed domain box -> [-1,1]^3; loads applied through the analytic Navier basis",
+  "arms": {
+    "D": "data only (labels)",
+    "P": "physics only (no labels)",
+    "Hy": "hybrid (labels + 560 collocation)"
+  },
+  "rules": {
+    "selection": "per arm, budget and seed: minimize validation median field error, then validation p95",
+    "target": "in-domain target: validation median <= 1.0% and p95 <= 3.0% (mean over seeds)",
+    "H1": "H1 (label efficiency) is supported at label budget N if the 95% bootstrap interval of the median per-design paired difference (data-only error minus hybrid error, each averaged over seeds) on the 30 validation designs lies entirely above 0. Evaluated at N = 10, 20 and 40; reported for all N.",
+    "label_free": "physics-only reaches the target label-free if any M meets it; report the smallest such M",
+    "capacity": "capacity curve: validation error versus degree with the best ridge, for physics-only at M = 560 and data-only at N = 140; a floor that does not move with more data or collocation indicates the model class, not the information, limits accuracy"
+  },
+  "grids": {
+    "degrees": [
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "ridges": [
+      1e-12,
+      1e-10,
+      1e-08,
+      1e-06,
+      0.0001
+    ],
+    "physics_weights": [
+      0.01,
+      0.1,
+      1.0,
+      10.0,
+      100.0
+    ]
+  },
+  "label_budgets": [
+    10,
+    20,
+    40,
+    70,
+    140
+  ],
+  "collocation_counts": [
+    20,
+    40,
+    70,
+    140,
+    280,
+    560
+  ],
+  "hybrid_collocation": 560,
+  "seeds": [
+    11,
+    22,
+    33
+  ],
+  "collocation": "scrambled Halton (seed 1000+seed), transformed domain, quantized to 10 significant digits, nested in M, min distance to validation/test designs asserted > 1e-6",
+  "partitions": {
+    "train": 140,
+    "validation": 30,
+    "test": 30
+  },
+  "runs": [
+    {
+      "arm": "P",
+      "budget": 20,
+      "seed": 11,
+      "selected": {
+        "degree": 3,
+        "ridge": 1e-06,
+        "physics_weight": 1.0
+      },
+      "validation": {
+        "median_percent": 2.736984498626747,
+        "p95_percent": 26.200336068277203,
+        "worst_percent": 47.230439975858296,
+        "mean_percent": 6.437130795941842,
+        "median_percent_ci95": [
+          1.7673207387891285,
+          3.9704281082889
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 3.7453474399825684,
+        "p95_percent": 13.302069613959647,
+        "worst_percent": 15.815344468216777,
+        "mean_percent": 4.883031536412274,
+        "median_percent_ci95": [
+          2.790273440391072,
+          4.997290751726443
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "P",
+      "budget": 40,
+      "seed": 11,
+      "selected": {
+        "degree": 4,
+        "ridge": 1e-06,
+        "physics_weight": 1.0
+      },
+      "validation": {
+        "median_percent": 0.7173723827628326,
+        "p95_percent": 9.61949456956678,
+        "worst_percent": 14.36494833397702,
+        "mean_percent": 2.1051940871505663,
+        "median_percent_ci95": [
+          0.5862328350645859,
+          1.1578275470790285
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.837523223890688,
+        "p95_percent": 11.646682477412647,
+        "worst_percent": 16.392369329067883,
+        "mean_percent": 2.5606874920949934,
+        "median_percent_ci95": [
+          0.6224711543855656,
+          2.206694961793651
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "P",
+      "budget": 70,
+      "seed": 11,
+      "selected": {
+        "degree": 5,
+        "ridge": 1e-06,
+        "physics_weight": 1.0
+      },
+      "validation": {
+        "median_percent": 0.35455932142160107,
+        "p95_percent": 3.2183688783686857,
+        "worst_percent": 6.946179319994453,
+        "mean_percent": 0.872375107195556,
+        "median_percent_ci95": [
+          0.19933646071960792,
+          0.44573662065883707
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.40185521992387097,
+        "p95_percent": 5.477352687301428,
+        "worst_percent": 10.21159827871388,
+        "mean_percent": 1.1909913222527908,
+        "median_percent_ci95": [
+          0.3522645321602004,
+          0.6993209076100277
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "P",
+      "budget": 140,
+      "seed": 11,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-12,
+        "physics_weight": 1.0
+      },
+      "validation": {
+        "median_percent": 0.11431504537882381,
+        "p95_percent": 1.0530808235900913,
+        "worst_percent": 3.4631688279318165,
+        "mean_percent": 0.3103921795593383,
+        "median_percent_ci95": [
+          0.09333490927560267,
+          0.1693294103368223
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.14234964327668748,
+        "p95_percent": 1.3183028794014635,
+        "worst_percent": 3.082156526564208,
+        "mean_percent": 0.3787946675318477,
+        "median_percent_ci95": [
+          0.10430178902449115,
+          0.2743507547508977
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "P",
+      "budget": 280,
+      "seed": 11,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-06,
+        "physics_weight": 1.0
+      },
+      "validation": {
+        "median_percent": 0.1512354539160312,
+        "p95_percent": 0.8499718922968089,
+        "worst_percent": 1.1135641381062347,
+        "mean_percent": 0.2844484365075759,
+        "median_percent_ci95": [
+          0.09538625541438263,
+          0.21611530451663505
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.15827426409407694,
+        "p95_percent": 1.1034150882191556,
+        "worst_percent": 1.374060652742542,
+        "mean_percent": 0.2803534523849161,
+        "median_percent_ci95": [
+          0.11950181725223444,
+          0.23452477069401115
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "P",
+      "budget": 560,
+      "seed": 11,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-06,
+        "physics_weight": 1.0
+      },
+      "validation": {
+        "median_percent": 0.12046970309846339,
+        "p95_percent": 0.8351629791676141,
+        "worst_percent": 0.9045012746433384,
+        "mean_percent": 0.25463622371648065,
+        "median_percent_ci95": [
+          0.08231980941907859,
+          0.19423686889015246
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.1482228751204176,
+        "p95_percent": 1.1713055391237222,
+        "worst_percent": 2.045336678301946,
+        "mean_percent": 0.32244842212882513,
+        "median_percent_ci95": [
+          0.09723264303523195,
+          0.28616935974704794
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "D",
+      "budget": 10,
+      "seed": 11,
+      "selected": {
+        "degree": 2,
+        "ridge": 1e-06,
+        "physics_weight": 0.0
+      },
+      "validation": {
+        "median_percent": 6.485759095539854,
+        "p95_percent": 128.7335483484764,
+        "worst_percent": 217.54261615269178,
+        "mean_percent": 29.896116166690625,
+        "median_percent_ci95": [
+          4.761690200299553,
+          19.586872036720987
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 11.445136340082868,
+        "p95_percent": 150.07118219292997,
+        "worst_percent": 195.51364033569524,
+        "mean_percent": 33.622619746645995,
+        "median_percent_ci95": [
+          5.911300275451571,
+          18.883223690633287
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "Hy",
+      "budget": 10,
+      "seed": 11,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-10,
+        "physics_weight": 100.0
+      },
+      "validation": {
+        "median_percent": 0.14693695091684222,
+        "p95_percent": 0.8293290967908844,
+        "worst_percent": 1.1909603814775989,
+        "mean_percent": 0.2847338462768247,
+        "median_percent_ci95": [
+          0.11825547618622874,
+          0.2049908450781911
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.17630636357672885,
+        "p95_percent": 1.3251828921362032,
+        "worst_percent": 2.0640171210539635,
+        "mean_percent": 0.3721154271226342,
+        "median_percent_ci95": [
+          0.09933537022098976,
+          0.30687429700436725
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "D",
+      "budget": 20,
+      "seed": 11,
+      "selected": {
+        "degree": 3,
+        "ridge": 0.0001,
+        "physics_weight": 0.0
+      },
+      "validation": {
+        "median_percent": 3.1523591517318597,
+        "p95_percent": 37.03964580979637,
+        "worst_percent": 113.79876842375931,
+        "mean_percent": 10.385808452958115,
+        "median_percent_ci95": [
+          2.7695509981341235,
+          4.590115926961439
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 4.062532157772528,
+        "p95_percent": 17.916329822237355,
+        "worst_percent": 28.488831900957873,
+        "mean_percent": 5.7839691667939634,
+        "median_percent_ci95": [
+          3.2829207542739143,
+          5.030881941914845
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "Hy",
+      "budget": 20,
+      "seed": 11,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-12,
+        "physics_weight": 100.0
+      },
+      "validation": {
+        "median_percent": 0.22633275796070335,
+        "p95_percent": 1.0766087539237128,
+        "worst_percent": 1.3956767169593862,
+        "mean_percent": 0.39621566910271366,
+        "median_percent_ci95": [
+          0.161617862029004,
+          0.3403235969002497
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.22612266115800617,
+        "p95_percent": 1.1044125547927965,
+        "worst_percent": 1.869695133589755,
+        "mean_percent": 0.32660601366058034,
+        "median_percent_ci95": [
+          0.1486026326615288,
+          0.3074676288860954
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "D",
+      "budget": 40,
+      "seed": 11,
+      "selected": {
+        "degree": 4,
+        "ridge": 0.0001,
+        "physics_weight": 0.0
+      },
+      "validation": {
+        "median_percent": 0.8685109862685856,
+        "p95_percent": 19.059857152467476,
+        "worst_percent": 21.084113872798046,
+        "mean_percent": 3.642907074184986,
+        "median_percent_ci95": [
+          0.6320568101894463,
+          1.1337114148641543
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 1.587535979201939,
+        "p95_percent": 22.514477900485257,
+        "worst_percent": 46.0597716262435,
+        "mean_percent": 5.16175358259876,
+        "median_percent_ci95": [
+          1.0646270685682553,
+          3.2464654399889508
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "Hy",
+      "budget": 40,
+      "seed": 11,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-12,
+        "physics_weight": 1.0
+      },
+      "validation": {
+        "median_percent": 0.1963477566821501,
+        "p95_percent": 1.0599303198298886,
+        "worst_percent": 1.1812744363106322,
+        "mean_percent": 0.30842725437569124,
+        "median_percent_ci95": [
+          0.15572335086765132,
+          0.324175071126268
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.17299108178163464,
+        "p95_percent": 2.2609170422591705,
+        "worst_percent": 2.6813222293857,
+        "mean_percent": 0.4481294673513611,
+        "median_percent_ci95": [
+          0.10057659087019574,
+          0.2460238473628234
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "D",
+      "budget": 70,
+      "seed": 11,
+      "selected": {
+        "degree": 5,
+        "ridge": 1e-06,
+        "physics_weight": 0.0
+      },
+      "validation": {
+        "median_percent": 0.2543487741494591,
+        "p95_percent": 2.731952334306468,
+        "worst_percent": 8.481961576132049,
+        "mean_percent": 0.788743969104311,
+        "median_percent_ci95": [
+          0.1624638608526161,
+          0.3726903836896977
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.29542656224238784,
+        "p95_percent": 6.837642117635177,
+        "worst_percent": 10.906945988303322,
+        "mean_percent": 1.2135758742186362,
+        "median_percent_ci95": [
+          0.1928848072068379,
+          0.648967776694925
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "Hy",
+      "budget": 70,
+      "seed": 11,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-12,
+        "physics_weight": 100.0
+      },
+      "validation": {
+        "median_percent": 0.11087321280431603,
+        "p95_percent": 2.114481836155419,
+        "worst_percent": 3.242380152793192,
+        "mean_percent": 0.4884705193693731,
+        "median_percent_ci95": [
+          0.08058193850151706,
+          0.28674093747245244
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.18492324193277376,
+        "p95_percent": 8.639130671960539,
+        "worst_percent": 18.185348341449902,
+        "mean_percent": 1.4922130288279551,
+        "median_percent_ci95": [
+          0.1408345431816805,
+          0.3248029834318354
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "D",
+      "budget": 140,
+      "seed": 11,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-08,
+        "physics_weight": 0.0
+      },
+      "validation": {
+        "median_percent": 0.07997859197816781,
+        "p95_percent": 2.351093186344645,
+        "worst_percent": 2.4788578324371446,
+        "mean_percent": 0.37167657524512676,
+        "median_percent_ci95": [
+          0.04191480013792266,
+          0.18312855158681102
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.08898151615488387,
+        "p95_percent": 1.938695053542893,
+        "worst_percent": 7.070037892701378,
+        "mean_percent": 0.5251210234112418,
+        "median_percent_ci95": [
+          0.05380561017549782,
+          0.1318814858567208
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "Hy",
+      "budget": 140,
+      "seed": 11,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-08,
+        "physics_weight": 0.01
+      },
+      "validation": {
+        "median_percent": 0.0799836502521514,
+        "p95_percent": 2.351114153882554,
+        "worst_percent": 2.4793186453238314,
+        "mean_percent": 0.3716876385313133,
+        "median_percent_ci95": [
+          0.0419192349082025,
+          0.1831530913230328
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.08896104763556492,
+        "p95_percent": 1.9389571483414194,
+        "worst_percent": 7.073897960611066,
+        "mean_percent": 0.5252755179137047,
+        "median_percent_ci95": [
+          0.05379879616368489,
+          0.13187913976951166
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "P",
+      "budget": 20,
+      "seed": 22,
+      "selected": {
+        "degree": 3,
+        "ridge": 1e-06,
+        "physics_weight": 1.0
+      },
+      "validation": {
+        "median_percent": 2.9137442772750086,
+        "p95_percent": 42.719359470796235,
+        "worst_percent": 107.5853992231423,
+        "mean_percent": 11.109983157219856,
+        "median_percent_ci95": [
+          2.3331036310639783,
+          3.761851512688629
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 2.575420392981633,
+        "p95_percent": 28.3353765752993,
+        "worst_percent": 38.06107605273035,
+        "mean_percent": 7.157838633869946,
+        "median_percent_ci95": [
+          2.1390511235129313,
+          5.502100019621675
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "P",
+      "budget": 40,
+      "seed": 22,
+      "selected": {
+        "degree": 4,
+        "ridge": 1e-06,
+        "physics_weight": 1.0
+      },
+      "validation": {
+        "median_percent": 1.249282160340289,
+        "p95_percent": 29.448611203999512,
+        "worst_percent": 63.65198691122185,
+        "mean_percent": 5.6773721096291405,
+        "median_percent_ci95": [
+          0.9780785063193225,
+          1.5728072126038852
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 1.903219493590539,
+        "p95_percent": 18.408924923942713,
+        "worst_percent": 54.86496275179918,
+        "mean_percent": 5.254534434285674,
+        "median_percent_ci95": [
+          1.0659880062218625,
+          2.943303738454875
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "P",
+      "budget": 70,
+      "seed": 22,
+      "selected": {
+        "degree": 5,
+        "ridge": 1e-06,
+        "physics_weight": 1.0
+      },
+      "validation": {
+        "median_percent": 0.2159670566238084,
+        "p95_percent": 1.7669532849968235,
+        "worst_percent": 3.5477919511645286,
+        "mean_percent": 0.5393199215224538,
+        "median_percent_ci95": [
+          0.1526722210340311,
+          0.45247255951750104
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.47678423291088035,
+        "p95_percent": 1.8504534729534756,
+        "worst_percent": 4.219758156369195,
+        "mean_percent": 0.7542749675922685,
+        "median_percent_ci95": [
+          0.285272941198302,
+          0.9191513083331753
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "P",
+      "budget": 140,
+      "seed": 22,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-06,
+        "physics_weight": 1.0
+      },
+      "validation": {
+        "median_percent": 0.13848279125197177,
+        "p95_percent": 1.109733260073329,
+        "worst_percent": 4.49512594841301,
+        "mean_percent": 0.44869782583681117,
+        "median_percent_ci95": [
+          0.10697442226865411,
+          0.30291765188177694
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.17291793729617,
+        "p95_percent": 1.2275932409576231,
+        "worst_percent": 3.1972468873929722,
+        "mean_percent": 0.33178854600587804,
+        "median_percent_ci95": [
+          0.1148857202553762,
+          0.20645553293242805
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "P",
+      "budget": 280,
+      "seed": 22,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-06,
+        "physics_weight": 1.0
+      },
+      "validation": {
+        "median_percent": 0.13083234794650112,
+        "p95_percent": 0.7822423361514003,
+        "worst_percent": 1.136056710956013,
+        "mean_percent": 0.24772495536323358,
+        "median_percent_ci95": [
+          0.08275427497373253,
+          0.2023667881759739
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.17366594174868916,
+        "p95_percent": 0.985267922166535,
+        "worst_percent": 1.8635104618286504,
+        "mean_percent": 0.30031783545417684,
+        "median_percent_ci95": [
+          0.09030494820277898,
+          0.2568184307174186
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "P",
+      "budget": 560,
+      "seed": 22,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-06,
+        "physics_weight": 1.0
+      },
+      "validation": {
+        "median_percent": 0.1599957079019665,
+        "p95_percent": 0.6932275195255744,
+        "worst_percent": 1.5588665233222128,
+        "mean_percent": 0.2667019463877377,
+        "median_percent_ci95": [
+          0.10573322696786104,
+          0.23742331670234834
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.20525303026396657,
+        "p95_percent": 1.3186007887284805,
+        "worst_percent": 1.6984445945593563,
+        "mean_percent": 0.33107279978506743,
+        "median_percent_ci95": [
+          0.1380832481239627,
+          0.24131515021161332
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "D",
+      "budget": 10,
+      "seed": 22,
+      "selected": {
+        "degree": 2,
+        "ridge": 0.0001,
+        "physics_weight": 0.0
+      },
+      "validation": {
+        "median_percent": 7.379600363892457,
+        "p95_percent": 92.0586164826361,
+        "worst_percent": 121.50841085542345,
+        "mean_percent": 18.925946381703444,
+        "median_percent_ci95": [
+          4.250462202340987,
+          9.807658924443698
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 5.690213790624023,
+        "p95_percent": 34.108768363994734,
+        "worst_percent": 98.14557677031924,
+        "mean_percent": 12.122114607656101,
+        "median_percent_ci95": [
+          3.6389616782152467,
+          10.44400212220243
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "Hy",
+      "budget": 10,
+      "seed": 22,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-12,
+        "physics_weight": 100.0
+      },
+      "validation": {
+        "median_percent": 0.1868174681376702,
+        "p95_percent": 1.0850195329092869,
+        "worst_percent": 1.7912286469123653,
+        "mean_percent": 0.3182180736593939,
+        "median_percent_ci95": [
+          0.10557945483253164,
+          0.32723432052055984
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.12343836204951981,
+        "p95_percent": 2.000805857741872,
+        "worst_percent": 4.277293297173461,
+        "mean_percent": 0.4389117939507179,
+        "median_percent_ci95": [
+          0.07503513526008529,
+          0.26792776506427807
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "D",
+      "budget": 20,
+      "seed": 22,
+      "selected": {
+        "degree": 2,
+        "ridge": 0.0001,
+        "physics_weight": 0.0
+      },
+      "validation": {
+        "median_percent": 5.348756162687647,
+        "p95_percent": 32.41234449082407,
+        "worst_percent": 58.2779636745408,
+        "mean_percent": 9.416635200974548,
+        "median_percent_ci95": [
+          3.614967193467854,
+          7.755976605423974
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 6.6176785868151065,
+        "p95_percent": 28.617457898737598,
+        "worst_percent": 61.72060226219167,
+        "mean_percent": 9.782698274886663,
+        "median_percent_ci95": [
+          4.132919562237819,
+          8.276701588048521
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "Hy",
+      "budget": 20,
+      "seed": 22,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-10,
+        "physics_weight": 100.0
+      },
+      "validation": {
+        "median_percent": 0.11588061667105476,
+        "p95_percent": 1.2165697821579355,
+        "worst_percent": 1.8801290254392935,
+        "mean_percent": 0.3397665808617017,
+        "median_percent_ci95": [
+          0.09521462358187367,
+          0.27027489554501916
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.17047636753987364,
+        "p95_percent": 2.2283674716164663,
+        "worst_percent": 4.236409882192346,
+        "mean_percent": 0.47401999693638347,
+        "median_percent_ci95": [
+          0.11706880455138549,
+          0.3092408345592494
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "D",
+      "budget": 40,
+      "seed": 22,
+      "selected": {
+        "degree": 4,
+        "ridge": 1e-08,
+        "physics_weight": 0.0
+      },
+      "validation": {
+        "median_percent": 1.303434472115688,
+        "p95_percent": 11.878917781637776,
+        "worst_percent": 14.024531019874981,
+        "mean_percent": 3.0092334150759137,
+        "median_percent_ci95": [
+          0.6838465096404248,
+          2.6145394369947685
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 1.3481371427233313,
+        "p95_percent": 7.928895641672275,
+        "worst_percent": 35.010535773343044,
+        "mean_percent": 3.166965772987565,
+        "median_percent_ci95": [
+          0.7271934451908881,
+          2.594350649955625
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "Hy",
+      "budget": 40,
+      "seed": 22,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-08,
+        "physics_weight": 100.0
+      },
+      "validation": {
+        "median_percent": 0.1245095233790135,
+        "p95_percent": 2.133498877814002,
+        "worst_percent": 2.799283156296843,
+        "mean_percent": 0.4805312678434915,
+        "median_percent_ci95": [
+          0.07940246689984286,
+          0.32060620204434637
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.2539139569030643,
+        "p95_percent": 4.104603733293288,
+        "worst_percent": 4.7161431693733595,
+        "mean_percent": 0.7904538728707299,
+        "median_percent_ci95": [
+          0.16206462177344252,
+          0.38918910320256883
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "D",
+      "budget": 70,
+      "seed": 22,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-06,
+        "physics_weight": 0.0
+      },
+      "validation": {
+        "median_percent": 0.3527118341693143,
+        "p95_percent": 6.1777794648865285,
+        "worst_percent": 22.788895612831418,
+        "mean_percent": 1.8975649350797157,
+        "median_percent_ci95": [
+          0.21903802446561443,
+          0.9079977480697881
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.5877492222105081,
+        "p95_percent": 5.7685305719888005,
+        "worst_percent": 9.803757509987234,
+        "mean_percent": 1.5505841719154225,
+        "median_percent_ci95": [
+          0.4222165744413113,
+          1.1167961162237532
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "Hy",
+      "budget": 70,
+      "seed": 22,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-12,
+        "physics_weight": 10.0
+      },
+      "validation": {
+        "median_percent": 0.09624459889535039,
+        "p95_percent": 3.177542295829351,
+        "worst_percent": 5.05222119824739,
+        "mean_percent": 0.5996529184958341,
+        "median_percent_ci95": [
+          0.07422680780448787,
+          0.2228607473323512
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.19585987881477235,
+        "p95_percent": 1.6416072968030955,
+        "worst_percent": 4.794631740526547,
+        "mean_percent": 0.535928851737179,
+        "median_percent_ci95": [
+          0.12387042328505572,
+          0.4054795681257985
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "D",
+      "budget": 140,
+      "seed": 22,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-08,
+        "physics_weight": 0.0
+      },
+      "validation": {
+        "median_percent": 0.07997859197816781,
+        "p95_percent": 2.351093186344645,
+        "worst_percent": 2.4788578324371446,
+        "mean_percent": 0.37167657524512676,
+        "median_percent_ci95": [
+          0.04191480013792266,
+          0.18312855158681102
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.08898151615488387,
+        "p95_percent": 1.938695053542893,
+        "worst_percent": 7.070037892701378,
+        "mean_percent": 0.5251210234112418,
+        "median_percent_ci95": [
+          0.05380561017549782,
+          0.1318814858567208
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "Hy",
+      "budget": 140,
+      "seed": 22,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-08,
+        "physics_weight": 0.01
+      },
+      "validation": {
+        "median_percent": 0.07998105667581482,
+        "p95_percent": 2.351121349295451,
+        "worst_percent": 2.479190445647494,
+        "mean_percent": 0.3716844430985878,
+        "median_percent_ci95": [
+          0.04191679724333345,
+          0.1831458120314497
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.08896799943738981,
+        "p95_percent": 1.9388984785745964,
+        "worst_percent": 7.072722877356114,
+        "mean_percent": 0.5252293949747531,
+        "median_percent_ci95": [
+          0.053800474556785105,
+          0.1318804351694465
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "P",
+      "budget": 20,
+      "seed": 33,
+      "selected": {
+        "degree": 5,
+        "ridge": 1e-06,
+        "physics_weight": 1.0
+      },
+      "validation": {
+        "median_percent": 6.299713788036344,
+        "p95_percent": 61.30239995531093,
+        "worst_percent": 125.09102027999717,
+        "mean_percent": 17.869549430441317,
+        "median_percent_ci95": [
+          3.2837642558873408,
+          12.579299322936668
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 9.35695908940157,
+        "p95_percent": 31.733604490542717,
+        "worst_percent": 70.07386208207907,
+        "mean_percent": 12.6566294723413,
+        "median_percent_ci95": [
+          6.0775384205373095,
+          13.590380332853275
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "P",
+      "budget": 40,
+      "seed": 33,
+      "selected": {
+        "degree": 4,
+        "ridge": 1e-06,
+        "physics_weight": 1.0
+      },
+      "validation": {
+        "median_percent": 0.8017311086467014,
+        "p95_percent": 10.183101897104947,
+        "worst_percent": 14.206598901923421,
+        "mean_percent": 2.40298332718139,
+        "median_percent_ci95": [
+          0.4721126572435107,
+          1.8748912282890051
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 1.1303556874832579,
+        "p95_percent": 12.139357400973106,
+        "worst_percent": 16.323216345088447,
+        "mean_percent": 2.6747152291451664,
+        "median_percent_ci95": [
+          0.689932693944398,
+          1.9490677963603007
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "P",
+      "budget": 70,
+      "seed": 33,
+      "selected": {
+        "degree": 5,
+        "ridge": 1e-12,
+        "physics_weight": 1.0
+      },
+      "validation": {
+        "median_percent": 0.3352562695908337,
+        "p95_percent": 4.374429978559883,
+        "worst_percent": 8.831835210752779,
+        "mean_percent": 0.9679899504276643,
+        "median_percent_ci95": [
+          0.23272347786295902,
+          0.544854289278987
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.3327163354201865,
+        "p95_percent": 8.25266230150674,
+        "worst_percent": 10.311633747582908,
+        "mean_percent": 1.4259234557410718,
+        "median_percent_ci95": [
+          0.27779859125502027,
+          0.7864736054470585
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "P",
+      "budget": 140,
+      "seed": 33,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-06,
+        "physics_weight": 1.0
+      },
+      "validation": {
+        "median_percent": 0.1135986261623323,
+        "p95_percent": 0.7870860648242168,
+        "worst_percent": 0.9400498647839184,
+        "mean_percent": 0.20878063396578211,
+        "median_percent_ci95": [
+          0.0815148047452355,
+          0.16014971210573942
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.13887957006209445,
+        "p95_percent": 2.1020535732996466,
+        "worst_percent": 5.430341075824214,
+        "mean_percent": 0.518921493501265,
+        "median_percent_ci95": [
+          0.07951616882274926,
+          0.23438862235061791
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "P",
+      "budget": 280,
+      "seed": 33,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-06,
+        "physics_weight": 1.0
+      },
+      "validation": {
+        "median_percent": 0.13030823724981572,
+        "p95_percent": 0.625199907083086,
+        "worst_percent": 1.228587335904028,
+        "mean_percent": 0.22657464247492223,
+        "median_percent_ci95": [
+          0.1089965939172577,
+          0.19113401312791442
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.14974037345895602,
+        "p95_percent": 1.7436847029465325,
+        "worst_percent": 2.353784137728353,
+        "mean_percent": 0.3559981694386833,
+        "median_percent_ci95": [
+          0.09361632469022019,
+          0.21924969169746833
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "P",
+      "budget": 560,
+      "seed": 33,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-06,
+        "physics_weight": 1.0
+      },
+      "validation": {
+        "median_percent": 0.13968230542727766,
+        "p95_percent": 0.9589294035394574,
+        "worst_percent": 1.050567545370648,
+        "mean_percent": 0.2650050102854236,
+        "median_percent_ci95": [
+          0.11375057166517649,
+          0.24278151773118717
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.16386661137305725,
+        "p95_percent": 1.3286765195669703,
+        "worst_percent": 1.8916518733627836,
+        "mean_percent": 0.3239110636561634,
+        "median_percent_ci95": [
+          0.08641948007143689,
+          0.27028951579461236
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "D",
+      "budget": 10,
+      "seed": 33,
+      "selected": {
+        "degree": 2,
+        "ridge": 0.0001,
+        "physics_weight": 0.0
+      },
+      "validation": {
+        "median_percent": 11.968293720812412,
+        "p95_percent": 125.84612402460023,
+        "worst_percent": 176.42255279093575,
+        "mean_percent": 27.26191476802686,
+        "median_percent_ci95": [
+          9.524784028886588,
+          16.67371015210434
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 14.37367154583228,
+        "p95_percent": 63.87389518275259,
+        "worst_percent": 100.72646035064834,
+        "mean_percent": 22.99549324599629,
+        "median_percent_ci95": [
+          7.726472857349591,
+          20.499103949705745
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "Hy",
+      "budget": 10,
+      "seed": 33,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-10,
+        "physics_weight": 100.0
+      },
+      "validation": {
+        "median_percent": 0.1449148975198583,
+        "p95_percent": 0.5586674679591507,
+        "worst_percent": 1.121382018935797,
+        "mean_percent": 0.24001325349017588,
+        "median_percent_ci95": [
+          0.11036358759134862,
+          0.2369490864864472
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.15081426500468226,
+        "p95_percent": 1.4101359228284571,
+        "worst_percent": 1.9328203293760244,
+        "mean_percent": 0.3039056478591764,
+        "median_percent_ci95": [
+          0.07126542861290927,
+          0.2698472411059017
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "D",
+      "budget": 20,
+      "seed": 33,
+      "selected": {
+        "degree": 3,
+        "ridge": 0.0001,
+        "physics_weight": 0.0
+      },
+      "validation": {
+        "median_percent": 5.2493943911119265,
+        "p95_percent": 73.9017553197148,
+        "worst_percent": 219.42680890342788,
+        "mean_percent": 18.59860039963863,
+        "median_percent_ci95": [
+          2.9706069398935386,
+          8.937139372492894
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 5.420682440925367,
+        "p95_percent": 59.53212391292218,
+        "worst_percent": 89.91872970838386,
+        "mean_percent": 17.71316649263059,
+        "median_percent_ci95": [
+          3.2672680494263915,
+          16.346379158195106
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "Hy",
+      "budget": 20,
+      "seed": 33,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-10,
+        "physics_weight": 100.0
+      },
+      "validation": {
+        "median_percent": 0.14871997804177156,
+        "p95_percent": 0.858138696290401,
+        "worst_percent": 1.1884424437177104,
+        "mean_percent": 0.27308235251666635,
+        "median_percent_ci95": [
+          0.11536620837784693,
+          0.27900391191084406
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.155404180811903,
+        "p95_percent": 0.8092047214254209,
+        "worst_percent": 2.214177035245551,
+        "mean_percent": 0.2779340183328859,
+        "median_percent_ci95": [
+          0.07950986061522718,
+          0.27391049354849367
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "D",
+      "budget": 40,
+      "seed": 33,
+      "selected": {
+        "degree": 4,
+        "ridge": 0.0001,
+        "physics_weight": 0.0
+      },
+      "validation": {
+        "median_percent": 1.6549336811342266,
+        "p95_percent": 11.767773592927943,
+        "worst_percent": 39.602461722245685,
+        "mean_percent": 3.982385549990241,
+        "median_percent_ci95": [
+          1.42517553924193,
+          3.019070402975147
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 3.5804979816188647,
+        "p95_percent": 40.24466875322855,
+        "worst_percent": 68.80350418713206,
+        "mean_percent": 8.116456345562025,
+        "median_percent_ci95": [
+          2.4800934205685596,
+          4.524500267234728
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "Hy",
+      "budget": 40,
+      "seed": 33,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-12,
+        "physics_weight": 100.0
+      },
+      "validation": {
+        "median_percent": 0.18851228305012907,
+        "p95_percent": 1.2676747376295003,
+        "worst_percent": 1.529211652659312,
+        "mean_percent": 0.37538462913799686,
+        "median_percent_ci95": [
+          0.08386540250630677,
+          0.34647046211886623
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.2042361609877447,
+        "p95_percent": 1.40721934408911,
+        "worst_percent": 2.25328908808573,
+        "mean_percent": 0.4066076240679,
+        "median_percent_ci95": [
+          0.13861380457705363,
+          0.36764064131856766
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "D",
+      "budget": 70,
+      "seed": 33,
+      "selected": {
+        "degree": 5,
+        "ridge": 1e-06,
+        "physics_weight": 0.0
+      },
+      "validation": {
+        "median_percent": 0.4730847693216448,
+        "p95_percent": 5.813015455259974,
+        "worst_percent": 8.256933992433508,
+        "mean_percent": 1.1431569180900163,
+        "median_percent_ci95": [
+          0.34085407776668336,
+          0.6246184709122865
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.49118591696575753,
+        "p95_percent": 2.654082204878784,
+        "worst_percent": 10.438010774733431,
+        "mean_percent": 1.0366855850481838,
+        "median_percent_ci95": [
+          0.37829920554694624,
+          0.851886367593541
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "Hy",
+      "budget": 70,
+      "seed": 33,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-10,
+        "physics_weight": 100.0
+      },
+      "validation": {
+        "median_percent": 0.19417402630913888,
+        "p95_percent": 1.2815495560231882,
+        "worst_percent": 3.408528696729886,
+        "mean_percent": 0.3830071695747496,
+        "median_percent_ci95": [
+          0.12889414701257712,
+          0.2436282842292385
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.19335233726386353,
+        "p95_percent": 2.6717980199273685,
+        "worst_percent": 22.061952420979853,
+        "mean_percent": 1.1528581873374444,
+        "median_percent_ci95": [
+          0.14561456187632124,
+          0.42885056774495345
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "D",
+      "budget": 140,
+      "seed": 33,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-08,
+        "physics_weight": 0.0
+      },
+      "validation": {
+        "median_percent": 0.07997859197816781,
+        "p95_percent": 2.351093186344645,
+        "worst_percent": 2.4788578324371446,
+        "mean_percent": 0.37167657524512676,
+        "median_percent_ci95": [
+          0.04191480013792266,
+          0.18312855158681102
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.08898151615488387,
+        "p95_percent": 1.938695053542893,
+        "worst_percent": 7.070037892701378,
+        "mean_percent": 0.5251210234112418,
+        "median_percent_ci95": [
+          0.05380561017549782,
+          0.1318814858567208
+        ],
+        "cases": 30
+      }
+    },
+    {
+      "arm": "Hy",
+      "budget": 140,
+      "seed": 33,
+      "selected": {
+        "degree": 6,
+        "ridge": 1e-08,
+        "physics_weight": 0.01
+      },
+      "validation": {
+        "median_percent": 0.07998011840955072,
+        "p95_percent": 2.351100496202497,
+        "worst_percent": 2.478924373553163,
+        "mean_percent": 0.3716753102227692,
+        "median_percent_ci95": [
+          0.041916743844849794,
+          0.1831481669070343
+        ],
+        "cases": 30
+      },
+      "test": {
+        "median_percent": 0.08896130815892243,
+        "p95_percent": 1.9388785859809754,
+        "worst_percent": 7.07174554103821,
+        "mean_percent": 0.5251945330640189,
+        "median_percent_ci95": [
+          0.05380317363937808,
+          0.1318792679120154
+        ],
+        "cases": 30
+      }
+    }
+  ],
+  "validation_curves": {
+    "D": {
+      "10": {
+        "median_percent_mean": 8.611217726748242,
+        "median_percent_range": [
+          6.485759095539854,
+          11.968293720812412
+        ],
+        "p95_percent_mean": 115.54609628523758,
+        "p95_percent_range": [
+          92.0586164826361,
+          128.7335483484764
+        ],
+        "degrees": [
+          2,
+          2,
+          2
+        ]
+      },
+      "20": {
+        "median_percent_mean": 4.583503235177145,
+        "median_percent_range": [
+          3.1523591517318597,
+          5.348756162687647
+        ],
+        "p95_percent_mean": 47.784581873445084,
+        "p95_percent_range": [
+          32.41234449082407,
+          73.9017553197148
+        ],
+        "degrees": [
+          3,
+          2,
+          3
+        ]
+      },
+      "40": {
+        "median_percent_mean": 1.2756263798395,
+        "median_percent_range": [
+          0.8685109862685856,
+          1.6549336811342266
+        ],
+        "p95_percent_mean": 14.235516175677732,
+        "p95_percent_range": [
+          11.767773592927943,
+          19.059857152467476
+        ],
+        "degrees": [
+          4,
+          4,
+          4
+        ]
+      },
+      "70": {
+        "median_percent_mean": 0.3600484592134727,
+        "median_percent_range": [
+          0.2543487741494591,
+          0.4730847693216448
+        ],
+        "p95_percent_mean": 4.90758241815099,
+        "p95_percent_range": [
+          2.731952334306468,
+          6.1777794648865285
+        ],
+        "degrees": [
+          5,
+          6,
+          5
+        ]
+      },
+      "140": {
+        "median_percent_mean": 0.07997859197816781,
+        "median_percent_range": [
+          0.07997859197816781,
+          0.07997859197816781
+        ],
+        "p95_percent_mean": 2.351093186344645,
+        "p95_percent_range": [
+          2.351093186344645,
+          2.351093186344645
+        ],
+        "degrees": [
+          6,
+          6,
+          6
+        ]
+      }
+    },
+    "Hy": {
+      "10": {
+        "median_percent_mean": 0.15955643885812357,
+        "median_percent_range": [
+          0.1449148975198583,
+          0.1868174681376702
+        ],
+        "p95_percent_mean": 0.824338699219774,
+        "p95_percent_range": [
+          0.5586674679591507,
+          1.0850195329092869
+        ],
+        "degrees": [
+          6,
+          6,
+          6
+        ]
+      },
+      "20": {
+        "median_percent_mean": 0.16364445089117655,
+        "median_percent_range": [
+          0.11588061667105476,
+          0.22633275796070335
+        ],
+        "p95_percent_mean": 1.0504390774573498,
+        "p95_percent_range": [
+          0.858138696290401,
+          1.2165697821579355
+        ],
+        "degrees": [
+          6,
+          6,
+          6
+        ]
+      },
+      "40": {
+        "median_percent_mean": 0.1697898543704309,
+        "median_percent_range": [
+          0.1245095233790135,
+          0.1963477566821501
+        ],
+        "p95_percent_mean": 1.4870346450911303,
+        "p95_percent_range": [
+          1.0599303198298886,
+          2.133498877814002
+        ],
+        "degrees": [
+          6,
+          6,
+          6
+        ]
+      },
+      "70": {
+        "median_percent_mean": 0.1337639460029351,
+        "median_percent_range": [
+          0.09624459889535039,
+          0.19417402630913888
+        ],
+        "p95_percent_mean": 2.191191229335986,
+        "p95_percent_range": [
+          1.2815495560231882,
+          3.177542295829351
+        ],
+        "degrees": [
+          6,
+          6,
+          6
+        ]
+      },
+      "140": {
+        "median_percent_mean": 0.07998160844583897,
+        "median_percent_range": [
+          0.07998011840955072,
+          0.0799836502521514
+        ],
+        "p95_percent_mean": 2.351111999793501,
+        "p95_percent_range": [
+          2.351100496202497,
+          2.351121349295451
+        ],
+        "degrees": [
+          6,
+          6,
+          6
+        ]
+      }
+    },
+    "P": {
+      "20": {
+        "median_percent_mean": 3.9834808546460336,
+        "median_percent_range": [
+          2.736984498626747,
+          6.299713788036344
+        ],
+        "p95_percent_mean": 43.40736516479479,
+        "p95_percent_range": [
+          26.200336068277203,
+          61.30239995531093
+        ],
+        "degrees": [
+          3,
+          3,
+          5
+        ]
+      },
+      "40": {
+        "median_percent_mean": 0.9227952172499411,
+        "median_percent_range": [
+          0.7173723827628326,
+          1.249282160340289
+        ],
+        "p95_percent_mean": 16.417069223557082,
+        "p95_percent_range": [
+          9.61949456956678,
+          29.448611203999512
+        ],
+        "degrees": [
+          4,
+          4,
+          4
+        ]
+      },
+      "70": {
+        "median_percent_mean": 0.30192754921208104,
+        "median_percent_range": [
+          0.2159670566238084,
+          0.35455932142160107
+        ],
+        "p95_percent_mean": 3.1199173806417977,
+        "p95_percent_range": [
+          1.7669532849968235,
+          4.374429978559883
+        ],
+        "degrees": [
+          5,
+          5,
+          5
+        ]
+      },
+      "140": {
+        "median_percent_mean": 0.12213215426437596,
+        "median_percent_range": [
+          0.1135986261623323,
+          0.13848279125197177
+        ],
+        "p95_percent_mean": 0.9833000494958789,
+        "p95_percent_range": [
+          0.7870860648242168,
+          1.109733260073329
+        ],
+        "degrees": [
+          6,
+          6,
+          6
+        ]
+      },
+      "280": {
+        "median_percent_mean": 0.13745867970411602,
+        "median_percent_range": [
+          0.13030823724981572,
+          0.1512354539160312
+        ],
+        "p95_percent_mean": 0.7524713785104318,
+        "p95_percent_range": [
+          0.625199907083086,
+          0.8499718922968089
+        ],
+        "degrees": [
+          6,
+          6,
+          6
+        ]
+      },
+      "560": {
+        "median_percent_mean": 0.14004923880923584,
+        "median_percent_range": [
+          0.12046970309846339,
+          0.1599957079019665
+        ],
+        "p95_percent_mean": 0.8291066340775486,
+        "p95_percent_range": [
+          0.6932275195255744,
+          0.9589294035394574
+        ],
+        "degrees": [
+          6,
+          6,
+          6
+        ]
+      }
+    }
+  },
+  "decisions": {
+    "rules": {
+      "selection": "per arm, budget and seed: minimize validation median field error, then validation p95",
+      "target": "in-domain target: validation median <= 1.0% and p95 <= 3.0% (mean over seeds)",
+      "H1": "H1 (label efficiency) is supported at label budget N if the 95% bootstrap interval of the median per-design paired difference (data-only error minus hybrid error, each averaged over seeds) on the 30 validation designs lies entirely above 0. Evaluated at N = 10, 20 and 40; reported for all N.",
+      "label_free": "physics-only reaches the target label-free if any M meets it; report the smallest such M",
+      "capacity": "capacity curve: validation error versus degree with the best ridge, for physics-only at M = 560 and data-only at N = 140; a floor that does not move with more data or collocation indicates the model class, not the information, limits accuracy"
+    },
+    "data_only_smallest_N_meeting_target": 140,
+    "hybrid_smallest_N_meeting_target": 10,
+    "physics_only_smallest_M_meeting_target": 140,
+    "H1": {
+      "10": {
+        "median_paired_difference_percent": 8.036767572325404,
+        "ci95_percent": [
+          6.416739824199155,
+          19.614535369267657
+        ],
+        "supported": true,
+        "hybrid_better_designs": 30,
+        "designs": 30
+      },
+      "20": {
+        "median_paired_difference_percent": 4.54274019103081,
+        "ci95_percent": [
+          3.9098268585563853,
+          5.993591101636948
+        ],
+        "supported": true,
+        "hybrid_better_designs": 30,
+        "designs": 30
+      },
+      "40": {
+        "median_paired_difference_percent": 1.4100784339218617,
+        "ci95_percent": [
+          1.0106762682215262,
+          1.5587127332316715
+        ],
+        "supported": true,
+        "hybrid_better_designs": 30,
+        "designs": 30
+      },
+      "70": {
+        "median_paired_difference_percent": 0.26734487006801544,
+        "ci95_percent": [
+          0.15374774346178555,
+          0.4093065582188008
+        ],
+        "supported": true,
+        "hybrid_better_designs": 29,
+        "designs": 30
+      },
+      "140": {
+        "median_paired_difference_percent": -1.2764546422400127e-06,
+        "ci95_percent": [
+          -4.531136182887451e-06,
+          3.7269450038873286e-07
+        ],
+        "supported": false,
+        "hybrid_better_designs": 12,
+        "designs": 30
+      }
+    },
+    "H1_supported_at_N_10_20_40": true,
+    "capacity": {
+      "P": {
+        "2": {
+          "coefficients_per_function": 10,
+          "median_percent_mean": 6.212872582066936,
+          "p95_percent_mean": 47.42166272011546
+        },
+        "3": {
+          "coefficients_per_function": 20,
+          "median_percent_mean": 2.276335091479405,
+          "p95_percent_mean": 13.997889603137184
+        },
+        "4": {
+          "coefficients_per_function": 35,
+          "median_percent_mean": 1.3553213104817405,
+          "p95_percent_mean": 4.63535178457979
+        },
+        "5": {
+          "coefficients_per_function": 56,
+          "median_percent_mean": 0.3702630284237554,
+          "p95_percent_mean": 2.4277059655675686
+        },
+        "6": {
+          "coefficients_per_function": 84,
+          "median_percent_mean": 0.14004923880923587,
+          "p95_percent_mean": 0.8291066340775486
+        }
+      },
+      "D": {
+        "2": {
+          "coefficients_per_function": 10,
+          "median_percent_mean": 3.308530790198641,
+          "p95_percent_mean": 30.664089873081757
+        },
+        "3": {
+          "coefficients_per_function": 20,
+          "median_percent_mean": 1.5162357433649596,
+          "p95_percent_mean": 9.57475932159239
+        },
+        "4": {
+          "coefficients_per_function": 35,
+          "median_percent_mean": 0.44401395015567036,
+          "p95_percent_mean": 3.6179901304333453
+        },
+        "5": {
+          "coefficients_per_function": 56,
+          "median_percent_mean": 0.27108367831390756,
+          "p95_percent_mean": 1.2689779084845176
+        },
+        "6": {
+          "coefficients_per_function": 84,
+          "median_percent_mean": 0.07997859197816783,
+          "p95_percent_mean": 2.3510931863446447
+        }
+      }
+    }
+  },
+  "test_curves": {
+    "D": {
+      "10": {
+        "median_percent_mean": 10.503007225513057,
+        "p95_percent_mean": 82.68461524655909
+      },
+      "20": {
+        "median_percent_mean": 5.366964395171,
+        "p95_percent_mean": 35.35530387796572
+      },
+      "40": {
+        "median_percent_mean": 2.1720570345147117,
+        "p95_percent_mean": 23.562680765128693
+      },
+      "70": {
+        "median_percent_mean": 0.4581205671395511,
+        "p95_percent_mean": 5.0867516315009205
+      },
+      "140": {
+        "median_percent_mean": 0.08898151615488387,
+        "p95_percent_mean": 1.938695053542893
+      }
+    },
+    "P": {
+      "20": {
+        "median_percent_mean": 5.225908974121924,
+        "p95_percent_mean": 24.457016893267223
+      },
+      "40": {
+        "median_percent_mean": 1.2903661349881617,
+        "p95_percent_mean": 14.064988267442821
+      },
+      "70": {
+        "median_percent_mean": 0.403785262751646,
+        "p95_percent_mean": 5.193489487253881
+      },
+      "140": {
+        "median_percent_mean": 0.15138238354498398,
+        "p95_percent_mean": 1.549316564552911
+      },
+      "280": {
+        "median_percent_mean": 0.16056019310057404,
+        "p95_percent_mean": 1.2774559044440743
+      },
+      "560": {
+        "median_percent_mean": 0.17244750558581382,
+        "p95_percent_mean": 1.2728609491397245
+      }
+    },
+    "Hy": {
+      "10": {
+        "median_percent_mean": 0.1501863302103103,
+        "p95_percent_mean": 1.5787082242355108
+      },
+      "20": {
+        "median_percent_mean": 0.18400106983659426,
+        "p95_percent_mean": 1.3806615826115614
+      },
+      "40": {
+        "median_percent_mean": 0.21038039989081456,
+        "p95_percent_mean": 2.5909133732138563
+      },
+      "70": {
+        "median_percent_mean": 0.19137848600380322,
+        "p95_percent_mean": 4.317511996230334
+      },
+      "140": {
+        "median_percent_mean": 0.08896345174395905,
+        "p95_percent_mean": 1.938911404298997
+      }
+    }
+  },
+  "cost_note": "Labels: one 5x5 solve per mode per labelled design. Physics: one 5x5 matrix assembly per mode per collocation design, no solve. On this simply supported family both are microsecond-scale, so H1 here is a methodological test of label efficiency, not a practical cost saving.",
+  "physics_assembly_seconds": 2.542127095000012,
+  "total_seconds": 87.27413292300002,
+  "environment": {
+    "python": "3.13.16",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "matplotlib": "3.11.2",
+    "platform": "Linux-6.18.44-fc-v310-x86_64-with-glibc2.39"
+  },
+  "source_sha256": {
+    "fgplate/__init__.py": "1db88cf12462518df46244676c049016d86079c87db4e9952e67b5cd43359227",
+    "fgplate/baseline.py": "f7b39b45913adb67d1a3c1f48ac6a0199fcd432ce10507d8668750dab85563f0",
+    "fgplate/fields.py": "aae65836afc66db3fc35d3dc65ed6e8f561d13cbb68880829b55c5d3530c5e18",
+    "fgplate/material.py": "d82e3d0e890b375fe7442e4fbfa4e33bba1be706e7bfed8a65fa2e61f27ec15f",
+    "fgplate/navier.py": "a04a600fc5686f3b8d5440c3f56bd7f7031bdded8ea64c3ce60cc053cf57da94",
+    "fgplate/pilot.py": "21ffd2d7ad077d9eda8d86d3b284b8bf475885707ff566dc3ad7534f2034e48e",
+    "fgplate/transfer.py": "160c9eb77f0ea8dc6f169d149ad4ad0d21cee0c2a8f6109645e12a62fc48aa5e",
+    "experiments/run_e3a.py": "7ccaf570cdc216e8cc8bcc2cfc38d16fcae81587f58b6aa11f0d1e68b309f196"
+  }
+}
